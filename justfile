@@ -32,3 +32,12 @@ update-pocketbase:
 # Check for available updates to all dependencies
 check-updates:
     go list -m -u all
+
+# Build Docker image
+build:
+    docker compose build
+
+# Run Docker image
+up:
+    docker compose up
+
