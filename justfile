@@ -8,8 +8,8 @@ serve:
     go run main.go serve
 
 # Create a new database migration with the specified name (defaults to "initial_superuser")
-makemigration name="initial_superuser":
-    go run . migrate create "{{name}}"
+makemigration name:
+    echo "y" | go run . migrate create "{{name}}"
 
 # Run all pending database migrations
 migrate:
@@ -40,4 +40,3 @@ build:
 # Run Docker image
 up:
     docker compose up
-

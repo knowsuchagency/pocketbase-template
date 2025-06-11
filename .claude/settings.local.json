@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(just makemigration:*)",
+      "Bash(ls:*)",
+      "WebFetch(domain:pocketbase.io)",
+      "Bash(just migrate)"
+    ],
+    "deny": []
+  }
+}
