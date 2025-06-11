@@ -52,3 +52,7 @@ docker-compose build         # Rebuild image
 - Multi-stage build: `golang:1.22-alpine` for building, `alpine:latest` for runtime
 - Volume mount: `./pb_data:/app/pb_data` for data persistence
 - Static binary: Built with `CGO_ENABLED=0` for Alpine compatibility
+
+### Migrations
+- Use the `just makemigration` recipe to create a migration
+- For migrations that create or update Collections, read the latest documentation on https://pocketbase.io/docs/go-collections/ before writing any code
