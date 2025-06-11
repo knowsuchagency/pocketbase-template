@@ -10,31 +10,30 @@ import (
 
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 
-    _ "app/migrations"
+	_ "app/migrations"
 )
 
 func main() {
-    app := pocketbase.New()
+	app := pocketbase.New()
 
-    // loosely check if it was executed using "go run"
-    isGoRun := strings.HasPrefix(os.Args[0], os.TempDir())
+	// loosely check if it was executed using "go run"
+	isGoRun := strings.HasPrefix(os.Args[0], os.TempDir())
 
-    migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
-        // enable auto creation of migration files when making collection changes in the Dashboard
-        // (the isGoRun check is to enable it only during development)
-        Automigrate: isGoRun,
-    })
+	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
+		// enable auto creation of migration files when making collection changes in the Dashboard
+		// (the isGoRun check is to enable it only during development)
+		Automigrate: isGoRun,
+	})
 
-    app.OnServe().BindFunc(func(se *core.ServeEvent) error {
-        // registers new "GET /hello" route
-        se.Router.GET("/hello", func(re *core.RequestEvent) error {
-            return re.String(200, "Hello world!")
-        })
+	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
+		se.Router.GET("/health", func(re *core.RequestEvent) error {
+			return re.String(200, "OK")
+		})
 
-        return se.Next()
-    })
+		return se.Next()
+	})
 
-    if err := app.Start(); err != nil {
-        log.Fatal(err)
-    }
+	if err := app.Start(); err != nil {
+		log.Fatal(err)
+	}
 }
