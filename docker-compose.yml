@@ -1,14 +1,28 @@
-version: '3.8'
+version: "3.8"
+
+x-common-volumes: &common-volumes
+  - ./${PB_DATA_DIR:-pb_data}:/app/pb_data
 
 services:
+  migrate:
+    build: .
+    container_name: pocketbase-migrate
+    volumes: *common-volumes
+    environment:
+      - SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
+      - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+    command: ["./pocketbase", "migrate", "up"]
+    restart: "no"
+
   pocketbase:
     build: .
     container_name: pocketbase
     restart: unless-stopped
     ports:
       - "8090:8090"
-    volumes:
-      - ./pb_data:/app/pb_data
+    volumes: *common-volumes
     environment:
       - SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
       - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+    depends_on:
+      - migrate
