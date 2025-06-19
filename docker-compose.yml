@@ -7,7 +7,6 @@ x-common-volumes: &common-volumes
 services:
   migrate:
     build: .
-    container_name: pocketbase-migrate
     volumes: *common-volumes
     environment:
       - SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
@@ -17,7 +16,6 @@ services:
 
   pocketbase:
     build: .
-    container_name: pocketbase
     restart: unless-stopped
     ports:
       - "8090:8090"
