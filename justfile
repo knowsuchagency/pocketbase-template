@@ -1,3 +1,5 @@
+set dotenv-load
+
 # Initialize a new Go project with the specified name (defaults to "app")
 init project="app":
     go mod init {{project}}
