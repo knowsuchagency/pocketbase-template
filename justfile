@@ -7,7 +7,7 @@ init project="app":
 
 # Start the PocketBase development server
 serve:
-    go run main.go serve
+    DEV_MODE=true go run main.go serve
 
 # Create a new database migration with the specified name (defaults to "initial_superuser")
 makemigration name:
