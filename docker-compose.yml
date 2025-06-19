@@ -2,6 +2,7 @@ version: "3.8"
 
 x-common-volumes: &common-volumes
   - ./${PB_DATA_DIR:-pb_data}:/app/pb_data
+  - ./migrations:/app/migrations
 
 services:
   migrate:
