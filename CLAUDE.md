@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a PocketBase template project - a Go-based backend-as-a-service (BaaS) application built on PocketBase.
 
+**NOTE:** The version of pocketbase used is greater than v0.28 which introduced several breaking changes.
+
 ## Essential Commands
 
 ### Development
