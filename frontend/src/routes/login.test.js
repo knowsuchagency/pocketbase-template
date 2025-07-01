@@ -18,9 +18,8 @@ describe('Login Flow', () => {
         // Login as superuser to create test user
         await loginAsSuperuser(pb);
         
-        // Create a test user
+        // Create a test user with unique email
         const result = await createTestUser(pb, {
-            email: 'test-login@example.com',
             password: 'TestLogin123!',
             passwordConfirm: 'TestLogin123!'
         });

@@ -21,7 +21,6 @@ describe('Login Integration Tests', () => {
         
         // Create a test user for integration testing
         const result = await createTestUser(pb, {
-            email: 'integration-test@example.com',
             password: 'IntegrationTest123!',
             passwordConfirm: 'IntegrationTest123!'
         });

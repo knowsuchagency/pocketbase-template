@@ -19,19 +19,33 @@ export async function loginAsSuperuser(pb) {
 
 // Create a test user
 export async function createTestUser(pb, userData = {}) {
+    // We need admin privileges to create users since the collection has no public create rule
+    const adminPb = createTestPb();
+    await loginAsSuperuser(adminPb);
+    
+    // Generate a more unique email with timestamp and random string
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(7);
     const defaultData = {
-        email: `test-${Date.now()}@example.com`,
+        email: `test-${timestamp}-${random}@example.com`,
         password: 'TestPassword123!',
         passwordConfirm: 'TestPassword123!',
         emailVisibility: true
     };
     
-    const user = await pb.collection('users').create({
+    // If userData includes an email, use that instead
+    const finalData = {
         ...defaultData,
         ...userData
-    });
+    };
     
-    return { user, password: userData.password || defaultData.password };
+    try {
+        const user = await adminPb.collection('users').create(finalData);
+        return { user, password: finalData.password };
+    } catch (error) {
+        console.error('Failed to create user:', error.response?.data || error);
+        throw error;
+    }
 }
 
 // Delete a test user
