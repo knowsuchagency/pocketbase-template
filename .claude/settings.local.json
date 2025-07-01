@@ -12,7 +12,9 @@
       "Bash(mv:*)",
       "Bash(bun run:*)",
       "Bash(curl:*)",
-      "Bash(just test:*)"
+      "Bash(just test:*)",
+      "Bash(docker-compose build:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

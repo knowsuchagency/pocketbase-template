@@ -5,7 +5,7 @@ Go-based backend-as-a-service (BaaS) application built on PocketBase (v0.28+) wi
 
 ## Project Structure
 - Backend: Go-based PocketBase application
-- Frontend: SvelteKit static SPA with Tailwind CSS and DaisyUI
+- Frontend: React Router v7 SPA with Tailwind CSS and DaisyUI
 - Database: SQLite (embedded in PocketBase)
 - Deployment: Docker multi-stage build
 
@@ -25,6 +25,7 @@ cd frontend
 bun install                   # Install deps
 bun run dev                   # Dev server
 bun run build                 # Build static files
+bun run typecheck             # Run TypeScript checks
 
 # Build & Dependencies
 just build                    # Build frontend and backend
@@ -46,7 +47,7 @@ docker-compose build          # Rebuild images
 - Auto-migration enabled in development (via `--dev` flag)
 - Migrations in `_ "app/migrations"` module
 - Data persistence in `pb_data/` directory
-- Frontend static files served from `pb_public/`
+- Frontend static files served from `frontend/build/client/`
 - Docker support with Alpine-based multi-stage build
 
 ## Development Guidelines
@@ -58,11 +59,11 @@ docker-compose build          # Rebuild images
 - Static files served from `pb_public/`
 - Custom routes via `app.OnServe().BindFunc()`
 
-### Frontend (SvelteKit)
+### Frontend (React Router)
 - Use `bun` as package manager (not npm)
-- Static adapter configured for SPA mode
-- Build outputs to `frontend/build/`
-- SSR disabled, prerendering enabled
+- SSR disabled for SPA mode (ssr: false in config)
+- Build outputs to `frontend/build/client/`
+- React v19 with React Router v7
 - Client-side routing with index.html fallback
 
 ### Code Style
@@ -72,7 +73,7 @@ docker-compose build          # Rebuild images
 - Check imports before adding new dependencies
 
 ### Testing & Quality
-- Run `bun run lint` before committing frontend changes
+- Run `bun run typecheck` before committing frontend changes
 - Run `bun run test` for frontend tests
 - Test builds with `docker-compose build`
 
@@ -98,5 +99,5 @@ docker-compose build          # Rebuild images
 ## Important Notes
 - Never commit secrets or API keys
 - Frontend API calls should use relative paths
-- Static files served at root path by PocketBase
-- Use `pb_public/` for static file serving in production
+- Static files served at root path by PocketBase using apis.Static()
+- Frontend served directly from `frontend/build/client/` directory
