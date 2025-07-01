@@ -1,10 +1,5 @@
 set dotenv-load
 
-# Initialize a new Go project with the specified name (defaults to "app")
-init project="app":
-    go mod init {{project}}
-    go mod tidy
-
 # Run bun dev server
 dev-bun:
     cd frontend && bun run dev
@@ -51,11 +46,3 @@ check-updates:
 # Show database schema
 show-schema:
     sqlite3 pb_data/data.db ".schema"
-
-# Run frontend tests
-test:
-    cd frontend && bun run test
-
-# Run frontend tests in watch mode
-test-watch:
-    cd frontend && bun run test:unit

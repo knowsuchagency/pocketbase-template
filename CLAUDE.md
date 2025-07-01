@@ -28,14 +28,8 @@ bun run dev                  # Start development server
 bun run build                # Build static files (outputs to frontend/build/client)
 bun run start                # Start production server
 bun run typecheck            # Run TypeScript type checking
-bun run test                 # Run tests
 ```
 
-### Testing
-```bash
-just test                    # Run frontend tests (auto-starts PocketBase if needed)
-just test-watch              # Run frontend tests in watch mode
-```
 
 ### Database Migrations
 ```bash

@@ -1,19 +1,21 @@
 # PocketBase Template
 
-A modern Go template for building applications with [PocketBase](https://pocketbase.io/), featuring Docker support, database migrations, and development tooling.
+A modern full-stack template featuring a Go-based [PocketBase](https://pocketbase.io/) backend and React Router v7 SPA frontend with Tailwind CSS and DaisyUI.
 
 ## Features
 
-- 🚀 PocketBase backend-as-a-service framework
-- 🐳 Docker and Docker Compose configuration
+- 🚀 PocketBase backend-as-a-service framework (v0.28+)
+- ⚛️ React Router v7 SPA with Tailwind CSS v4 and DaisyUI
+- 🐳 Docker and Docker Compose configuration with multi-stage builds
 - 📦 Database migration system with automatic migrations in development
-- 🛠️ Task automation with `just`
+- 🛠️ Task automation with `just` for concurrent development
 - 🔐 Environment-based superuser initialization
 - 🏥 Health check endpoint at `/health`
 
 ## Prerequisites
 
 - Go 1.24 or higher
+- [Bun](https://bun.sh/) for frontend development
 - Docker and Docker Compose (for containerized deployment)
 - [just](https://github.com/casey/just) task runner (optional but recommended)
 
@@ -29,7 +31,13 @@ cd pocketbase-template
 
 2. Install dependencies
 ```bash
+# Backend dependencies
 go mod download
+
+# Frontend dependencies
+cd frontend
+bun install
+cd ..
 ```
 
 3. Set environment variables for the initial superuser
@@ -38,14 +46,14 @@ export SUPERUSER_EMAIL="admin@example.com"
 export SUPERUSER_PASSWORD="your-secure-password"
 ```
 
-4. Run the development server
+4. Run the development server (frontend and backend concurrently)
 ```bash
-just serve
-# or
-go run main.go serve
+just dev
 ```
 
-The PocketBase admin UI will be available at `http://localhost:8090/_/`
+This will start:
+- PocketBase server at `http://localhost:8090` (admin UI at `http://localhost:8090/_/`)
+- Frontend dev server at `http://localhost:5173`
 
 ### Docker Deployment
 
@@ -63,18 +71,32 @@ docker-compose up -d
 ## Available Commands
 
 ### Development
-- `just serve` - Start PocketBase development server
-- `just init [name]` - Initialize new Go project
+- `just dev` - Run both frontend and backend concurrently
+- `just dev-pb` - Start PocketBase development server with --dev flag
+- `just dev-bun` - Run bun development server
+- `just build` - Build both frontend and backend
+- `just serve` - Start PocketBase server (deprecated, use `just dev-pb`)
+
+### Frontend Development
+```bash
+cd frontend
+bun run dev        # Start development server
+bun run build      # Build static files (outputs to frontend/build/client)
+bun run start      # Start production server
+bun run typecheck  # Run TypeScript type checking
+```
+
 
 ### Database Migrations
 - `just makemigration "name"` - Create new migration file
 - `just migrate` - Run pending migrations
 - `just migratedown` - Rollback last migration
+- `just show-schema` - Display current database schema
 
 ### Dependency Management
 - `just update-deps` - Update all Go dependencies
 - `just update-pocketbase` - Update PocketBase to latest version
-- `just check-updates` - Check for available updates
+- `just check-updates` - Check for available updates to all dependencies
 
 ## Project Structure
 
@@ -83,25 +105,65 @@ docker-compose up -d
 ├── migrations/             # Database migrations
 │   └── 1749628624_initial_superuser.go
 ├── pb_data/               # PocketBase data (gitignored)
+├── frontend/              # React Router v7 SPA
+│   ├── app/              # Application routes and components
+│   ├── public/           # Static assets
+│   ├── build/            # Build output (gitignored)
+│   │   └── client/       # Static files served by PocketBase
+│   ├── package.json      # Frontend dependencies
+│   ├── tailwind.config.ts # Tailwind CSS v4 configuration
+│   └── react-router.config.ts # React Router configuration
 ├── Dockerfile             # Multi-stage Docker build
 ├── docker-compose.yml     # Container orchestration
 ├── justfile              # Task automation
 └── go.mod                # Go module definition
 ```
 
+## Architecture
+
+### Backend
+- **PocketBase Application**: Single binary with embedded SQLite database
+- **Auto-migration**: Enabled only during development (detected via `go run` execution)
+- **Static File Serving**: Frontend build served from `frontend/build/client/`
+- **Custom Routes**: Register via `app.OnServe().BindFunc()` callback
+
+### Frontend
+- **Framework**: React Router v7 with SSR disabled for SPA deployment
+- **Styling**: Tailwind CSS v4 with DaisyUI component library
+- **Build Output**: Static files built to `frontend/build/client/`
+- **SPA Mode**: Client-side routing with SSR disabled
+
+### Docker Setup
+- Multi-stage build with:
+  - `oven/bun:1` for frontend build
+  - `golang:1.24-alpine` for backend build
+  - `alpine:latest` for runtime
+- Volume mount: `./pb_data:/app/pb_data` for data persistence
+- Static binary: Built with `CGO_ENABLED=0` for Alpine compatibility
+
 ## Extending the Template
 
-### Adding Custom Routes
+### Adding Custom Backend Routes
 
 Add routes in the `OnServe` callback in `main.go`:
 
 ```go
 app.OnServe().BindFunc(func(se *core.ServeEvent) error {
-    se.Router.GET("/custom", func(re *core.RequestEvent) error {
+    se.Router.GET("/api/custom", func(re *core.RequestEvent) error {
         return re.JSON(200, map[string]string{"message": "Custom endpoint"})
     })
     return se.Next()
 })
+```
+
+### Creating Frontend Routes
+
+Add new routes in `frontend/app/routes/`:
+```tsx
+// frontend/app/routes/dashboard.tsx
+export default function Dashboard() {
+  return <div>Dashboard Page</div>;
+}
 ```
 
 ### Creating Migrations
@@ -111,7 +173,7 @@ Generate a new migration:
 just makemigration "add_custom_collection"
 ```
 
-Then edit the generated file in the `migrations/` directory.
+Then edit the generated file in the `migrations/` directory. For collection migrations, refer to the [PocketBase documentation](https://pocketbase.io/docs/go-collections/).
 
 ## Environment Variables
 

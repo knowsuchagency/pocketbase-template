@@ -1,7 +1,7 @@
 # PocketBase Template Project
 
 ## Overview
-Go-based backend-as-a-service (BaaS) application built on PocketBase (v0.28+) with SvelteKit frontend.
+Go-based backend-as-a-service (BaaS) application built on PocketBase (v0.28+) with React Router v7 frontend.
 
 ## Project Structure
 - Backend: Go-based PocketBase application
@@ -33,9 +33,6 @@ just update-deps             # Update all Go dependencies
 just update-pocketbase       # Update PocketBase to latest
 just check-updates           # Check for available updates
 
-# Testing
-just test                     # Run frontend tests
-just test-watch               # Run tests in watch mode
 
 # Docker
 docker-compose up -d          # Start services
@@ -56,7 +53,7 @@ docker-compose build          # Rebuild images
 - PocketBase version > v0.28 (breaking changes)
 - Use `just dev-pb` or `go run main.go serve --dev` for development
 - Migrations in `migrations/` directory
-- Static files served from `pb_public/`
+- Static files served from `frontend/build/client/`
 - Custom routes via `app.OnServe().BindFunc()`
 
 ### Frontend (React Router)
@@ -74,7 +71,6 @@ docker-compose build          # Rebuild images
 
 ### Testing & Quality
 - Run `bun run typecheck` before committing frontend changes
-- Run `bun run test` for frontend tests
 - Test builds with `docker-compose build`
 
 ### Environment Variables
