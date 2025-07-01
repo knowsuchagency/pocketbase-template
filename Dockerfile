@@ -1,5 +1,26 @@
-# Build stage
-FROM golang:1.24-alpine AS builder
+# Frontend build stage
+FROM oven/bun:1 AS frontend-builder
+
+WORKDIR /frontend
+
+# Copy frontend package files
+COPY frontend/package.json frontend/bun.lock ./
+
+# Install frontend dependencies
+RUN bun install
+
+# Copy frontend source code
+COPY frontend/ ./
+
+# Add build argument for API URL
+ARG POCKETBASE_URL
+ENV POCKETBASE_URL=$POCKETBASE_URL
+
+# Build frontend
+RUN bun run build
+
+# Backend build stage
+FROM golang:1.24-alpine AS backend-builder
 
 WORKDIR /build
 
@@ -24,8 +45,12 @@ WORKDIR /app
 # Install runtime dependencies
 RUN apk add --no-cache ca-certificates
 
-# Copy binary from builder
-COPY --from=builder /build/pocketbase .
+# Copy binary from backend builder
+COPY --from=backend-builder /build/pocketbase .
+
+# Copy built frontend from frontend builder
+# SvelteKit static adapter outputs to 'build' directory
+COPY --from=frontend-builder /frontend/build ./pb_public
 
 # Create data directory
 RUN mkdir -p /app/pb_data

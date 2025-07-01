@@ -5,9 +5,22 @@ init project="app":
     go mod init {{project}}
     go mod tidy
 
+# Run bun dev server
+dev-bun:
+    cd frontend && bun run dev
+
 # Start the PocketBase development server
-serve:
+dev-pb:
     go run main.go serve --dev
+
+# Run bun and pocketbase in dev mode
+dev:
+    npx concurrently "bun run dev" "go run main.go serve --dev"
+
+# Build frontend and backend
+build:
+    cd frontend && bun run build
+    go build -o pocketbase main.go
 
 # Create a new database migration with the specified name (defaults to "initial_superuser")
 makemigration name:
@@ -34,14 +47,6 @@ update-pocketbase:
 # Check for available updates to all dependencies
 check-updates:
     go list -m -u all
-
-# Build Docker image
-build:
-    docker compose build
-
-# Run Docker image
-up:
-    docker compose up
 
 # Show database schema
 show-schema:

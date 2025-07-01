@@ -1,14 +1,31 @@
 # PocketBase Template Project
 
 ## Overview
-Go-based backend-as-a-service (BaaS) application built on PocketBase (v0.28+).
+Go-based backend-as-a-service (BaaS) application built on PocketBase (v0.28+) with SvelteKit frontend.
+
+## Project Structure
+- Backend: Go-based PocketBase application
+- Frontend: SvelteKit static SPA with Tailwind CSS and DaisyUI
+- Database: SQLite (embedded in PocketBase)
+- Deployment: Docker multi-stage build
 
 ## Quick Commands
 ```bash
+# Backend
 just serve                    # Start dev server on port 8090
-just makemigration "name"    # Create new migration
-just migrate                 # Run migrations
-just show-schema            # Display database schema
+just makemigration "name"     # Create new migration
+just migrate                  # Run migrations
+just show-schema             # Display database schema
+
+# Frontend
+cd frontend
+bun install                   # Install deps
+bun run dev                   # Dev server
+bun run build                 # Build static files
+
+# Docker
+docker-compose up -d          # Start services
+docker-compose build          # Rebuild images
 ```
 
 ## Key Points
@@ -16,9 +33,57 @@ just show-schema            # Display database schema
 - Auto-migration enabled in development (via `--dev` flag)
 - Migrations in `_ "app/migrations"` module
 - Data persistence in `pb_data/` directory
+- Frontend static files served from `pb_public/`
 - Docker support with Alpine-based multi-stage build
+
+## Development Guidelines
+
+### Backend (Go/PocketBase)
+- PocketBase version > v0.28 (breaking changes)
+- Use `just dev-pb` or `go run main.go serve --dev` for development
+- Migrations in `migrations/` directory
+- Static files served from `pb_public/`
+- Custom routes via `app.OnServe().BindFunc()`
+
+### Frontend (SvelteKit)
+- Use `bun` as package manager (not npm)
+- Static adapter configured for SPA mode
+- Build outputs to `frontend/build/`
+- SSR disabled, prerendering enabled
+- Client-side routing with index.html fallback
+
+### Code Style
+- Follow existing patterns in codebase
+- Use TypeScript for frontend code
+- Minimal comments unless necessary
+- Check imports before adding new dependencies
+
+### Testing & Quality
+- Run `bun run lint` before committing frontend changes
+- Run `bun run test` for frontend tests
+- Test builds with `docker-compose build`
+
+### Environment Variables
+- `SUPERUSER_EMAIL`: Initial admin email
+- `SUPERUSER_PASSWORD`: Initial admin password
+- `SMTP_USERNAME`: For email configuration
+- `SMTP_PASSWORD`: For email configuration
+- `POCKETBASE_URL`: API URL for frontend builds
+
+### Docker
+- Frontend built with `oven/bun:1`
+- Backend built with `golang:1.24-alpine`
+- Runtime uses `alpine:latest`
+- Data persisted in `./pb_data`
+
 
 ## Migration Guidelines
 - Use `just makemigration` to create migrations
 - Each migration has up/down functions
 - For Collection operations, check: https://pocketbase.io/docs/go-collections/
+
+## Important Notes
+- Never commit secrets or API keys
+- Frontend API calls should use relative paths
+- Static files served at root path by PocketBase
+- Use `pb_public/` for static file serving in production
