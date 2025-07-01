@@ -1,7 +1,7 @@
 version: "3.8"
 
 x-common-volumes: &common-volumes
-  - ${PB_DATA_DIR:-./pb_data}:/app/pb_data
+  - ${PB_DATA:-./pb_data}:/app/pb_data
   - ./migrations:/app/migrations
 
 services:
@@ -18,7 +18,7 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "8090:8090"
+      - "${PORT:-8090}:8090"
     volumes: *common-volumes
     environment:
       - SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
