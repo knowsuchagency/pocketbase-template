@@ -23,7 +23,7 @@ func main() {
 		smtpPassword := os.Getenv("SMTP_PASSWORD")
 
 		if smtpUsername != "" && smtpPassword != "" {
-			app.Settings().Meta.SenderName = "Candified"
+			app.Settings().Meta.SenderName = "knowsuchagency"
 			app.Settings().Meta.SenderAddress = "noreply@knowsuchagency.com"
 			app.Settings().SMTP.Enabled = true
 			app.Settings().SMTP.Host = "email-smtp.us-east-2.amazonaws.com"
