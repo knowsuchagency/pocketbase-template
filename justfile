@@ -7,7 +7,7 @@ init project="app":
 
 # Start the PocketBase development server
 serve:
-    DEV_MODE=true go run main.go serve
+    go run main.go serve --dev
 
 # Create a new database migration with the specified name (defaults to "initial_superuser")
 makemigration name:
@@ -46,3 +46,7 @@ up:
 # Generate pocketbase types
 pocketbase-typegen:
     npx pocketbase-typegen --db ./pb_data/data.db --out pocketbase-types.ts
+
+# Show database schema
+show-schema:
+    sqlite3 pb_data/data.db ".schema"

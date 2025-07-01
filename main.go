@@ -15,8 +15,6 @@ import (
 func main() {
 	app := pocketbase.New()
 
-	isGoRun := os.Getenv("DEV_MODE") == "true"
-
 	// Configure SMTP settings
 	app.OnBootstrap().BindFunc(func(e *core.BootstrapEvent) error {
 		smtpUsername := os.Getenv("SMTP_USERNAME")
@@ -41,14 +39,16 @@ func main() {
 		return e.Next()
 	})
 
+	devMode, _ := app.RootCmd.Flags().GetBool("dev")
+
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
 		// enable auto creation of migration files when making collection changes in the Dashboard
-		// (the isGoRun check is to enable it only during development)
-		Automigrate: isGoRun,
+		// (use PocketBase's built-in --dev flag to enable it only during development)
+		Automigrate: devMode,
 		Dir:         "migrations",
 	})
 
-	if isGoRun {
+	if devMode {
 		log.Println("Automigrate: ENABLED (development mode)")
 	} else {
 		log.Println("Automigrate: DISABLED (production mode)")
