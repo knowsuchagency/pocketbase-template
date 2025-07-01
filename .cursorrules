@@ -1,0 +1,24 @@
+# PocketBase Template Project
+
+## Overview
+Go-based backend-as-a-service (BaaS) application built on PocketBase (v0.28+).
+
+## Quick Commands
+```bash
+just serve                    # Start dev server on port 8090
+just makemigration "name"    # Create new migration
+just migrate                 # Run migrations
+just show-schema            # Display database schema
+```
+
+## Key Points
+- Single binary with embedded SQLite database
+- Auto-migration enabled in development (via `--dev` flag)
+- Migrations in `_ "app/migrations"` module
+- Data persistence in `pb_data/` directory
+- Docker support with Alpine-based multi-stage build
+
+## Migration Guidelines
+- Use `just makemigration` to create migrations
+- Each migration has up/down functions
+- For Collection operations, check: https://pocketbase.io/docs/go-collections/

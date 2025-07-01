@@ -21,6 +21,7 @@ go run main.go serve         # Alternative: direct Go command
 just makemigration "name"    # Create new migration file
 just migrate                 # Run pending migrations
 just migratedown            # Rollback last migration
+just show-schema            # Display current database schema
 ```
 
 ### Dependency Management

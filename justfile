@@ -43,10 +43,6 @@ build:
 up:
     docker compose up
 
-# Generate pocketbase types
-pocketbase-typegen:
-    npx pocketbase-typegen --db ./pb_data/data.db --out pocketbase-types.ts
-
 # Show database schema
 show-schema:
     sqlite3 pb_data/data.db ".schema"
