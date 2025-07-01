@@ -5,7 +5,8 @@
       "Bash(ls:*)",
       "WebFetch(domain:pocketbase.io)",
       "Bash(just migrate)",
-      "Bash(go list:*)"
+      "Bash(go list:*)",
+      "WebFetch(domain:daisyui.com)"
     ],
     "deny": []
   }
