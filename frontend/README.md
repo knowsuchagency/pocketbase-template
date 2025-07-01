@@ -1,27 +1,31 @@
-# Welcome to React Router!
+# PocketBase Template - Frontend
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+React Router v7 SPA frontend for the PocketBase template project.
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
+- ⚛️ React Router v7 configured as SPA (SSR disabled)
+- 🎨 Tailwind CSS v4 with DaisyUI components
 - 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- ⚡️ Hot Module Replacement (HMR)
+- 📦 Optimized production builds
+- 🔗 PocketBase SDK integration
+- 📱 Responsive design with DaisyUI
 
 ## Getting Started
+
+### Prerequisites
+
+- [Bun](https://bun.sh/) (recommended) or npm
+- PocketBase backend running at `http://localhost:8090`
 
 ### Installation
 
 Install the dependencies:
 
 ```bash
-npm install
+bun install
+# or npm install
 ```
 
 ### Development
@@ -29,59 +33,107 @@ npm install
 Start the development server with HMR:
 
 ```bash
-npm run dev
+bun run dev
+# or npm run dev
 ```
 
 Your application will be available at `http://localhost:5173`.
+
+For concurrent frontend and backend development, use from the project root:
+
+```bash
+just dev
+```
 
 ## Building for Production
 
 Create a production build:
 
 ```bash
-npm run build
+bun run build
+# or npm run build
 ```
 
-## Deployment
+This outputs static files to `build/client/` which are served by PocketBase in production.
 
-### Docker Deployment
+## Project Structure
 
-To build and run using Docker:
+```
+├── app/                    # Application source code
+│   ├── routes/            # React Router routes
+│   ├── components/        # Reusable components
+│   └── root.tsx          # Root component
+├── public/                # Static assets
+├── build/                 # Build output (gitignored)
+│   └── client/           # Static files for production
+├── components.json        # shadcn/ui configuration
+├── tailwind.config.ts     # Tailwind CSS configuration
+└── react-router.config.ts # React Router configuration
+```
+
+## Key Configuration
+
+### React Router SPA Mode
+
+The application is configured as a Single Page Application in `react-router.config.ts`:
+
+```typescript
+export default {
+  ssr: false,  // Disables server-side rendering
+}
+```
+
+### PocketBase Integration
+
+The frontend connects to PocketBase API at:
+- Development: `http://localhost:8090`
+- Production: Same origin (served by PocketBase)
+
+## Available Scripts
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+bun run dev        # Start development server
+bun run build      # Build for production
+bun run start      # Start production server (for testing)
+bun run typecheck  # Run TypeScript type checking
 ```
 
 ## Styling
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+This project uses:
+- [Tailwind CSS v4](https://tailwindcss.com/) for utility-first styling
+- [DaisyUI](https://daisyui.com/) for pre-built components
+- CSS-in-JS support via Tailwind
 
----
+### Using DaisyUI Components
 
-Built with ❤️ using React Router.
+```tsx
+// Example button using DaisyUI classes
+<button className="btn btn-primary">Click me</button>
+
+// Example card component
+<div className="card bg-base-100 shadow-xl">
+  <div className="card-body">
+    <h2 className="card-title">Card Title</h2>
+    <p>Card content</p>
+  </div>
+</div>
+```
+
+## Environment Variables
+
+Create a `.env` file for local development:
+
+```env
+POCKETBASE_URL=http://localhost:8090
+```
+
+## Deployment
+
+The frontend is designed to be served as static files by PocketBase. After building:
+
+1. The `build/client/` directory contains all static assets
+2. These files are copied to the Docker container during build
+3. PocketBase serves them at the root path using `apis.Static()`
+
+For standalone deployment, you can serve the `build/client/` directory with any static file server.
