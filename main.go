@@ -61,7 +61,7 @@ func main() {
 		})
 
 		// Serve static files from pb_public using PocketBase's built-in static helper
-		publicPath := "./pb_public"
+		publicPath := "frontend/build"
 
 		// Check if pb_public directory exists
 		if _, err := os.Stat(publicPath); os.IsNotExist(err) {

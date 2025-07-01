@@ -50,7 +50,7 @@ COPY --from=backend-builder /build/pocketbase .
 
 # Copy built frontend from frontend builder
 # SvelteKit static adapter outputs to 'build' directory
-COPY --from=frontend-builder /frontend/build ./pb_public
+COPY --from=frontend-builder /frontend/build ./frontend/build
 
 # Create data directory
 RUN mkdir -p /app/pb_data

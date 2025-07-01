@@ -31,6 +31,12 @@ bun run lint                 # Run ESLint
 bun run test                 # Run tests
 ```
 
+### Testing
+```bash
+just test                    # Run frontend tests (auto-starts PocketBase if needed)
+just test-watch              # Run frontend tests in watch mode
+```
+
 ### Database Migrations
 ```bash
 just makemigration "name"    # Create new migration file

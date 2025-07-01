@@ -8,7 +8,11 @@
       "Bash(go list:*)",
       "WebFetch(domain:daisyui.com)",
       "Bash(bun add:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(mv:*)",
+      "Bash(bun run:*)",
+      "Bash(curl:*)",
+      "Bash(just test:*)"
     ],
     "deny": []
   }

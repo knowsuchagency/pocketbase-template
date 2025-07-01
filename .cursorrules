@@ -32,6 +32,10 @@ just update-deps             # Update all Go dependencies
 just update-pocketbase       # Update PocketBase to latest
 just check-updates           # Check for available updates
 
+# Testing
+just test                     # Run frontend tests
+just test-watch               # Run tests in watch mode
+
 # Docker
 docker-compose up -d          # Start services
 docker-compose build          # Rebuild images

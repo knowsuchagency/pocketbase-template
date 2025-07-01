@@ -15,7 +15,7 @@ dev-pb:
 
 # Run bun and pocketbase in dev mode
 dev:
-    npx concurrently "bun run dev" "go run main.go serve --dev"
+    npx concurrently --names "FRONTEND,BACKEND" --prefix-colors "cyan,magenta" "just dev-bun" "just dev-pb"
 
 # Build frontend and backend
 build:
@@ -51,3 +51,11 @@ check-updates:
 # Show database schema
 show-schema:
     sqlite3 pb_data/data.db ".schema"
+
+# Run frontend tests
+test:
+    cd frontend && bun run test
+
+# Run frontend tests in watch mode
+test-watch:
+    cd frontend && bun run test:unit
