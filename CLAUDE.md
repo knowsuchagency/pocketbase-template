@@ -12,10 +12,12 @@ This is a PocketBase template project with:
 
 ## Essential Commands
 
-### Backend Development
+### Development
 ```bash
-just dev-pb                    # Start PocketBase development server on port 8090
-go run main.go serve         # Alternative: direct Go command
+just dev                     # Run both frontend and backend concurrently
+just dev-pb                  # Start PocketBase development server with --dev flag
+just dev-bun                 # Run bun development server
+just build                   # Build both frontend and backend
 ```
 
 ### Frontend Development
@@ -33,14 +35,15 @@ bun run test                 # Run tests
 ```bash
 just makemigration "name"    # Create new migration file
 just migrate                 # Run pending migrations
-just migratedown            # Rollback last migration
-just show-schema            # Display current database schema
+just migratedown             # Rollback last migration
+just show-schema             # Display current database schema
 ```
 
 ### Dependency Management
 ```bash
 just update-deps             # Update all Go dependencies
 just update-pocketbase       # Update PocketBase to latest version
+just check-updates           # Check for available updates to all dependencies
 ```
 
 ### Docker Operations

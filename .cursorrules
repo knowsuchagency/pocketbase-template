@@ -12,16 +12,25 @@ Go-based backend-as-a-service (BaaS) application built on PocketBase (v0.28+) wi
 ## Quick Commands
 ```bash
 # Backend
-just serve                    # Start dev server on port 8090
+just dev-pb                   # Start PocketBase dev server with --dev flag
+just dev                      # Run both frontend and backend concurrently
 just makemigration "name"     # Create new migration
 just migrate                  # Run migrations
+just migratedown             # Rollback last migration
 just show-schema             # Display database schema
 
 # Frontend
+just dev-bun                  # Run bun dev server
 cd frontend
 bun install                   # Install deps
 bun run dev                   # Dev server
 bun run build                 # Build static files
+
+# Build & Dependencies
+just build                    # Build frontend and backend
+just update-deps             # Update all Go dependencies
+just update-pocketbase       # Update PocketBase to latest
+just check-updates           # Check for available updates
 
 # Docker
 docker-compose up -d          # Start services
