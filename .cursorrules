@@ -17,7 +17,7 @@ just dev                      # Run both frontend and backend concurrently
 just makemigration "name"     # Create new migration
 just migrate                  # Run migrations
 just migratedown             # Rollback last migration
-just show-schema             # Display database schema
+just show-collections        # Display all collections
 
 # Frontend
 just dev-bun                  # Run bun dev server

@@ -36,7 +36,7 @@ bun run typecheck            # Run TypeScript type checking
 just makemigration "name"    # Create new migration file
 just migrate                 # Run pending migrations
 just migratedown             # Rollback last migration
-just show-schema             # Display current database schema
+just show-collections        # Show all collections in human/LLM readable format
 ```
 
 ### Dependency Management
