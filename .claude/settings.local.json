@@ -14,7 +14,8 @@
       "Bash(curl:*)",
       "Bash(just test:*)",
       "Bash(docker-compose build:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(just show-collections:*)"
     ],
     "deny": []
   }

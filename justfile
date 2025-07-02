@@ -43,6 +43,6 @@ update-pocketbase:
 check-updates:
     go list -m -u all
 
-# Show database schema
-show-schema:
-    sqlite3 pb_data/data.db ".schema"
+# Show all collections in a human and LLM readable format
+show-collections:
+    go run cmd/show-collections.go serve
