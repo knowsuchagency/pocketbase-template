@@ -12,6 +12,11 @@ This is a PocketBase template project with:
 
 ## Essential Commands
 
+### Initial Setup
+```bash
+just init                    # Initialize project: install dependencies, create .env (if needed) with prompted credentials, configure direnv
+```
+
 ### Development
 ```bash
 just dev                     # Run both frontend and backend concurrently
@@ -23,7 +28,6 @@ just build                   # Build both frontend and backend
 ### Frontend Development
 ```bash
 cd frontend
-bun install                  # Install dependencies
 bun run dev                  # Start development server
 bun run build                # Build static files (outputs to frontend/build/client)
 bun run start                # Start production server
@@ -60,7 +64,7 @@ docker-compose build         # Rebuild image
 - **Frontend Serving**: Static files served from `frontend/build/client/` directory at root path
 - **Migration System**: Automatic migration support with `migratecmd` plugin
 - **Module Import**: Migrations imported as `_ "app/migrations"` in main.go
-- **Environment-based Configuration**: Superuser credentials via `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD`
+- **Environment-based Configuration**: Superuser credentials via `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` (see `.env.example`)
 
 ### Frontend Architecture
 - **Framework**: React Router v7 with SSR disabled for SPA deployment
