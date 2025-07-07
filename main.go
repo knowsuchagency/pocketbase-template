@@ -5,12 +5,12 @@ import (
 	"os"
 
 	"github.com/pocketbase/pocketbase"
-	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 
 	_ "app/migrations"
+	"app/routes"
 )
 
 func main() {
@@ -55,27 +55,7 @@ func main() {
 		log.Println("Automigrate: DISABLED (production mode)")
 	}
 
-	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
-		se.Router.GET("/health", func(re *core.RequestEvent) error {
-			return re.String(200, "OK")
-		})
-
-		// Serve static files from pb_public using PocketBase's built-in static helper
-		publicPath := "frontend/build/client"
-
-		// Check if pb_public directory exists
-		if _, err := os.Stat(publicPath); os.IsNotExist(err) {
-			log.Printf("Warning: Frontend public directory not found at %s", publicPath)
-		} else {
-			// Use PocketBase's apis.Static() to serve the entire pb_public directory
-			// This will handle all static files including assets, favicon.ico, robots.txt, and SPA routing
-			// The 'true' parameter enables index.html fallback for SPA routing
-			se.Router.GET("/{path...}", apis.Static(os.DirFS(publicPath), true))
-			log.Printf("Serving static files from %s", publicPath)
-		}
-
-		return se.Next()
-	})
+	app.OnServe().BindFunc(routes.Register)
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
