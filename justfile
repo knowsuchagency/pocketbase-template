@@ -49,6 +49,10 @@ build:
     cd frontend && bun run build
     go build -o pocketbase main.go
 
+# Run all tests
+test:
+    go test -v ./...
+
 # Create a new database migration with the specified name (defaults to "initial_superuser")
 makemigration name:
     echo "y" | go run . migrate create "{{name}}"
