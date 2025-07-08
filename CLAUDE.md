@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 This is a PocketBase template project with:
+
 - **Backend**: Go-based backend-as-a-service (BaaS) application built on PocketBase
 - **Frontend**: React Router v7 SPA (Single Page Application) with Tailwind CSS and DaisyUI
 
@@ -13,12 +14,14 @@ This is a PocketBase template project with:
 ## Essential Commands
 
 ### Initial Setup
+
 ```bash
 just init                    # Initialize project: install dependencies, create .env (if needed) with prompted credentials, configure direnv
 just install-deps            # Install frontend and backend dependencies
 ```
 
 ### Development
+
 ```bash
 just dev                     # Run both frontend and backend concurrently
 just dev-pb                  # Start PocketBase development server with --dev flag
@@ -27,6 +30,7 @@ just build                   # Build both frontend and backend
 ```
 
 ### Frontend Development
+
 ```bash
 cd frontend
 bun run dev                  # Start development server
@@ -35,8 +39,8 @@ bun run start                # Start production server
 bun run typecheck            # Run TypeScript type checking
 ```
 
-
 ### Database Migrations
+
 ```bash
 just makemigration "name"    # Create new migration file
 just migrate                 # Run pending migrations
@@ -46,11 +50,13 @@ just reset                   # Reset the database (WARNING: deletes all data)
 ```
 
 ### Testing
+
 ```bash
 just test                    # Run all tests
 ```
 
 ### Dependency Management
+
 ```bash
 just update-deps             # Update all Go dependencies
 just update-pocketbase       # Update PocketBase to latest version
@@ -58,6 +64,7 @@ just check-updates           # Check for available updates to all dependencies
 ```
 
 ### Docker Operations
+
 ```bash
 docker-compose up -d         # Start container in background
 docker-compose down          # Stop container
@@ -67,15 +74,17 @@ docker-compose build         # Rebuild image
 ## Architecture
 
 ### Core Structure
+
 - **PocketBase Application**: Single binary with embedded SQLite database
 - **Frontend Serving**: Static files served from `frontend/build/client/` directory at root path
 - **Migration System**: Automatic migration support with `migratecmd` plugin
 - **Module Import**: Migrations imported as `_ "app/migrations"` in main.go
-- **Environment-based Configuration**: 
+- **Environment-based Configuration**:
   - Backend: Superuser credentials via `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` (see `.env.example`)
   - Frontend: Backend URL via `VITE_BACKEND_URL` environment variable
 
 ### Frontend Architecture
+
 - **Framework**: React Router v7 with SSR disabled for SPA deployment
 - **Styling**: Tailwind CSS v4 with DaisyUI component library
 - **Build Output**: Static files built to `frontend/build/client/` directory
@@ -84,13 +93,16 @@ docker-compose build         # Rebuild image
 - **Configuration**: Constants centralized in `frontend/app/config/constants.ts` module
 
 ### Key Implementation Details
+
 1. **Auto-migration**: Enabled only during development (detected via `go run` execution)
 2. **Custom Routes**: Register via `app.OnServe().BindFunc()` callback
 3. **Migration Pattern**: Each migration has up/down functions for apply/revert operations
 4. **Data Persistence**: `pb_data/` directory for database and uploaded files
+5. **PocketBase Documentation**: When implementing features involving PocketBase, use `go doc` to view the relevant documentation. For example: `go doc github.com/pocketbase/pocketbase/core`.
 
 ### Docker Setup
-- Multi-stage build: 
+
+- Multi-stage build:
   - `oven/bun:1` for frontend build
   - `golang:1.24-alpine` for backend build
   - `alpine:latest` for runtime
@@ -99,5 +111,6 @@ docker-compose build         # Rebuild image
 - Frontend served from `frontend/build/client/` directory using PocketBase's apis.Static() handler
 
 ### Migrations
+
 - Use the `just makemigration` recipe to create a migration
 - For migrations that create or update Collections, read the latest documentation on https://pocketbase.io/docs/go-collections/ before writing any code
