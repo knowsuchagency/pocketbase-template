@@ -15,6 +15,7 @@ This is a PocketBase template project with:
 ### Initial Setup
 ```bash
 just init                    # Initialize project: install dependencies, create .env (if needed) with prompted credentials, configure direnv
+just install-deps            # Install frontend and backend dependencies
 ```
 
 ### Development
@@ -41,6 +42,12 @@ just makemigration "name"    # Create new migration file
 just migrate                 # Run pending migrations
 just migratedown             # Rollback last migration
 just show-collections        # Show all collections in human/LLM readable format
+just reset                   # Reset the database (WARNING: deletes all data)
+```
+
+### Testing
+```bash
+just test                    # Run all tests
 ```
 
 ### Dependency Management

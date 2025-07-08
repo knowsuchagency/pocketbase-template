@@ -31,13 +31,10 @@ cd pocketbase-template
 
 2. Install dependencies
 ```bash
-# Backend dependencies
-go mod download
-
-# Frontend dependencies
-cd frontend
-bun install
-cd ..
+just install-deps
+# Or manually:
+# go mod tidy
+# cd frontend && bun install
 ```
 
 3. Set environment variables for the initial superuser
@@ -70,12 +67,15 @@ docker-compose up -d
 
 ## Available Commands
 
+### Initial Setup
+- `just init` - Initialize project: install dependencies, create .env (if needed) with prompted credentials, configure direnv
+- `just install-deps` - Install frontend and backend dependencies
+
 ### Development
 - `just dev` - Run both frontend and backend concurrently
 - `just dev-pb` - Start PocketBase development server with --dev flag
 - `just dev-bun` - Run bun development server
 - `just build` - Build both frontend and backend
-- `just serve` - Start PocketBase server (deprecated, use `just dev-pb`)
 
 ### Frontend Development
 ```bash
@@ -91,7 +91,11 @@ bun run typecheck  # Run TypeScript type checking
 - `just makemigration "name"` - Create new migration file
 - `just migrate` - Run pending migrations
 - `just migratedown` - Rollback last migration
-- `just show-schema` - Display current database schema
+- `just show-collections` - Show all collections in human/LLM readable format
+- `just reset` - Reset the database (WARNING: deletes all data)
+
+### Testing
+- `just test` - Run all tests
 
 ### Dependency Management
 - `just update-deps` - Update all Go dependencies
