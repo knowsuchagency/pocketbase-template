@@ -52,6 +52,7 @@ build:
 # Run all tests
 test:
     go test -v ./...
+    cd frontend && bun run test
 
 # Create a new database migration with the specified name (defaults to "initial_superuser")
 makemigration name:

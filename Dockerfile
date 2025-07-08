@@ -22,10 +22,10 @@ COPY --from=frontend-deps /frontend/node_modules ./node_modules
 COPY frontend/ ./
 
 # Add build argument for API URL
-ARG POCKETBASE_URL
-ENV POCKETBASE_URL=$POCKETBASE_URL
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 
-# Build frontend with npm (using react-router build)
+# Build frontend with bun (using SvelteKit static adapter)
 RUN npm run build
 
 # Backend build stage
@@ -59,7 +59,7 @@ COPY --from=backend-builder /build/pocketbase .
 
 # Copy built frontend from frontend builder
 # SvelteKit static adapter outputs to 'build' directory
-COPY --from=frontend-builder /frontend/build/client ./frontend/build/client
+COPY --from=frontend-builder /frontend/build ./frontend/build
 
 # Create data directory
 RUN mkdir -p /app/pb_data

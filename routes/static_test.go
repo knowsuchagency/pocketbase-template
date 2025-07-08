@@ -13,7 +13,7 @@ import (
 func TestStaticRoute(t *testing.T) {
 	// Create a temporary test directory for static files
 	tempDir := t.TempDir()
-	testPublicPath := filepath.Join(tempDir, "frontend", "build", "client")
+	testPublicPath := filepath.Join(tempDir, "frontend", "build")
 	err := os.MkdirAll(testPublicPath, 0755)
 	if err != nil {
 		t.Fatal(err)
@@ -53,7 +53,7 @@ func TestStaticRoute(t *testing.T) {
 }
 
 func TestStaticRouteWithMissingDirectory(t *testing.T) {
-	// Change to a directory without frontend/build/client
+	// Change to a directory without frontend/build
 	tempDir := t.TempDir()
 	originalWd, _ := os.Getwd()
 	os.Chdir(tempDir)
