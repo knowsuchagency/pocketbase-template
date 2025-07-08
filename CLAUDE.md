@@ -149,7 +149,6 @@ docker-compose build         # Rebuild image
 ```
 ├── main.go                 # Application entry point
 ├── migrations/             # Database migrations
-│   └── 1749628624_initial_superuser.go
 ├── pb_data/               # PocketBase data (gitignored)
 ├── frontend/              # SvelteKit SPA
 │   ├── src/              # Application source
