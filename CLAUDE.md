@@ -77,7 +77,6 @@ docker-compose up -d
 
 ```bash
 just init                    # Initialize project: install dependencies, create .env (if needed) with prompted credentials, configure direnv
-just install-deps            # Install frontend and backend dependencies
 ```
 
 ### Development
@@ -280,6 +279,10 @@ just makemigration "add_custom_collection"
 ```
 
 Then edit the generated file in the `migrations/` directory. For collection migrations, refer to the [PocketBase documentation](https://pocketbase.io/docs/go-collections/).
+
+## Claude Code Tips
+
+- You can use the show-collections (`just show-collections`) recipe at any time to determine which pocketbase collections have been created and their fields
 
 ## License
 
