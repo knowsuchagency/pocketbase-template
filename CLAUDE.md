@@ -146,24 +146,24 @@ docker-compose build         # Rebuild image
 ## Project Structure
 
 ```
-├── main.go                 # Application entry point
-├── migrations/             # Database migrations
-├── pb_data/               # PocketBase data (gitignored)
-├── frontend/              # SvelteKit SPA
-│   ├── src/              # Application source
-│   │   ├── routes/       # SvelteKit routes
-│   │   ├── lib/          # Shared components and utilities
-│   │   └── app.css       # Global styles
-│   ├── static/           # Static assets
-│   ├── tests/            # Playwright test suite
-│   ├── build/            # Build output (gitignored)
-│   ├── package.json      # Frontend dependencies
-│   ├── svelte.config.js  # SvelteKit configuration
-│   └── vite.config.ts    # Vite build configuration
-├── Dockerfile             # Multi-stage Docker build
-├── docker-compose.yml     # Container orchestration
-├── justfile              # Task automation
-└── go.mod                # Go module definition
+├── main.go                  # Application entry point
+├── migrations/              # Database migrations
+├── pb_data/                 # PocketBase data (gitignored)
+├── frontend/                # SvelteKit SPA
+│   ├── src/                 # Application source
+│   │   ├── routes/          # SvelteKit routes
+│   │   ├── lib/             # Shared components and utilities
+│   │   └── app.css          # Global styles
+│   ├── static/              # Static assets
+│   ├── tests/               # Playwright test suite
+│   ├── build/               # Build output (gitignored)
+│   ├── package.json         # Frontend dependencies
+│   ├── svelte.config.js     # SvelteKit configuration
+│   └── vite.config.ts       # Vite build configuration
+├── Dockerfile               # Multi-stage Docker build
+├── docker-compose.yml       # Container orchestration
+├── justfile                 # Task automation
+└── go.mod                   # Go module definition
 ```
 
 ## Architecture
