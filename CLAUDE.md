@@ -1,15 +1,75 @@
-# CLAUDE.md
+# PocketBase Template
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+A modern full-stack template featuring a Go-based [PocketBase](https://pocketbase.io/) backend and SvelteKit SPA frontend with Tailwind CSS and DaisyUI.
 
-## Project Overview
+This file serves as both project documentation and guidance for Claude Code (claude.ai/code) when working with code in this repository.
 
-This is a PocketBase template project with:
+## Features
 
-- **Backend**: Go-based backend-as-a-service (BaaS) application built on PocketBase
-- **Frontend**: SvelteKit SPA (Single Page Application) with Tailwind CSS and DaisyUI
+- 🚀 PocketBase backend-as-a-service framework (v0.28+)
+- ⚡ SvelteKit SPA with Tailwind CSS v4 and DaisyUI
+- 🐳 Docker and Docker Compose configuration with multi-stage builds
+- 📦 Database migration system with automatic migrations in development
+- 🛠️ Task automation with `just` for concurrent development
+- 🔐 Environment-based superuser initialization
+- 🏥 Health check endpoint at `/health`
+- 🧪 Unified Playwright test suite for frontend testing
 
-**NOTE:** The version of pocketbase used is greater than v0.28 which introduced several breaking changes.
+## Prerequisites
+
+- Go 1.24 or higher
+- [Bun](https://bun.sh/) for frontend development
+- Docker and Docker Compose (for containerized deployment)
+- [just](https://github.com/casey/just) task runner (optional but recommended)
+
+## Quick Start
+
+### Local Development
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd pocketbase-template
+```
+
+2. Initialize the project
+```bash
+just init
+```
+
+This will:
+- Install all dependencies (frontend and backend)
+- Create a `.env` file if it doesn't exist
+- Prompt you to set superuser credentials
+- Configure direnv for automatic environment loading
+
+3. Run the development server (frontend and backend concurrently)
+```bash
+just dev
+```
+
+This will start:
+- PocketBase server at `http://localhost:8090` (admin UI at `http://localhost:8090/_/`)
+- Frontend dev server at `http://localhost:5173`
+
+### Docker Deployment
+
+1. Initialize the project and create configuration
+```bash
+just init
+```
+
+Or manually create a `.env` file:
+```env
+SUPERUSER_EMAIL=admin@example.com
+SUPERUSER_PASSWORD=your-secure-password
+VITE_BACKEND_URL=http://localhost:8090
+```
+
+2. Build and run with Docker Compose
+```bash
+docker-compose up -d
+```
 
 ## Essential Commands
 
@@ -59,6 +119,15 @@ cd frontend && bun run test  # Run frontend tests only
 cd frontend && bun run test:ui # Run frontend tests in UI mode
 ```
 
+### Environment Variables
+
+#### Backend
+- `SUPERUSER_EMAIL` - Email for the initial admin user
+- `SUPERUSER_PASSWORD` - Password for the initial admin user
+
+#### Frontend
+- `VITE_BACKEND_URL` - Backend URL for development (defaults to `http://localhost:8090`)
+
 ### Dependency Management
 
 ```bash
@@ -73,6 +142,30 @@ just check-updates           # Check for available updates to all dependencies
 docker-compose up -d         # Start container in background
 docker-compose down          # Stop container
 docker-compose build         # Rebuild image
+```
+
+## Project Structure
+
+```
+├── main.go                 # Application entry point
+├── migrations/             # Database migrations
+│   └── 1749628624_initial_superuser.go
+├── pb_data/               # PocketBase data (gitignored)
+├── frontend/              # SvelteKit SPA
+│   ├── src/              # Application source
+│   │   ├── routes/       # SvelteKit routes
+│   │   ├── lib/          # Shared components and utilities
+│   │   └── app.css       # Global styles
+│   ├── static/           # Static assets
+│   ├── tests/            # Playwright test suite
+│   ├── build/            # Build output (gitignored)
+│   ├── package.json      # Frontend dependencies
+│   ├── svelte.config.js  # SvelteKit configuration
+│   └── vite.config.ts    # Vite build configuration
+├── Dockerfile             # Multi-stage Docker build
+├── docker-compose.yml     # Container orchestration
+├── justfile              # Task automation
+└── go.mod                # Go module definition
 ```
 
 ## Architecture
@@ -119,3 +212,43 @@ docker-compose build         # Rebuild image
 
 - Use the `just makemigration` recipe to create a migration
 - For migrations that create or update Collections, read the latest documentation on https://pocketbase.io/docs/go-collections/ before writing any code
+
+## Extending the Template
+
+### Adding Custom Backend Routes
+
+Add routes in the `OnServe` callback in `main.go`:
+
+```go
+app.OnServe().BindFunc(func(se *core.ServeEvent) error {
+    se.Router.GET("/api/custom", func(re *core.RequestEvent) error {
+        return re.JSON(200, map[string]string{"message": "Custom endpoint"})
+    })
+    return se.Next()
+})
+```
+
+### Creating Frontend Routes
+
+Add new routes in `frontend/src/routes/`:
+```svelte
+<!-- frontend/src/routes/dashboard/+page.svelte -->
+<script>
+  // Your component logic here
+</script>
+
+<div>Dashboard Page</div>
+```
+
+### Creating Migrations
+
+Generate a new migration:
+```bash
+just makemigration "add_custom_collection"
+```
+
+Then edit the generated file in the `migrations/` directory. For collection migrations, refer to the [PocketBase documentation](https://pocketbase.io/docs/go-collections/).
+
+## License
+
+MIT License - see LICENSE file for details
