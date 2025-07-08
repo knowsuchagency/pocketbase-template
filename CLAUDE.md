@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a PocketBase template project with:
 
 - **Backend**: Go-based backend-as-a-service (BaaS) application built on PocketBase
-- **Frontend**: React Router v7 SPA (Single Page Application) with Tailwind CSS and DaisyUI
+- **Frontend**: SvelteKit SPA (Single Page Application) with Tailwind CSS and DaisyUI
 
 **NOTE:** The version of pocketbase used is greater than v0.28 which introduced several breaking changes.
 
@@ -34,9 +34,11 @@ just build                   # Build both frontend and backend
 ```bash
 cd frontend
 bun run dev                  # Start development server
-bun run build                # Build static files (outputs to frontend/build/client)
-bun run start                # Start production server
-bun run typecheck            # Run TypeScript type checking
+bun run build                # Build static files (outputs to frontend/build)
+bun run preview              # Preview production build
+bun run check                # Run svelte-check for type checking
+bun run test                 # Run all Playwright tests
+bun run test:ui              # Run tests in interactive UI mode
 ```
 
 ### Database Migrations
@@ -52,7 +54,9 @@ just reset                   # Reset the database (WARNING: deletes all data)
 ### Testing
 
 ```bash
-just test                    # Run all tests
+just test                    # Run all tests (Go backend + Playwright frontend)
+cd frontend && bun run test  # Run frontend tests only
+cd frontend && bun run test:ui # Run frontend tests in UI mode
 ```
 
 ### Dependency Management
@@ -76,7 +80,7 @@ docker-compose build         # Rebuild image
 ### Core Structure
 
 - **PocketBase Application**: Single binary with embedded SQLite database
-- **Frontend Serving**: Static files served from `frontend/build/client/` directory at root path
+- **Frontend Serving**: Static files served from `frontend/build/` directory at root path
 - **Migration System**: Automatic migration support with `migratecmd` plugin
 - **Module Import**: Migrations imported as `_ "app/migrations"` in main.go
 - **Environment-based Configuration**:
@@ -85,12 +89,13 @@ docker-compose build         # Rebuild image
 
 ### Frontend Architecture
 
-- **Framework**: React Router v7 with SSR disabled for SPA deployment
-- **Styling**: Tailwind CSS v4 with DaisyUI component library
-- **Build Output**: Static files built to `frontend/build/client/` directory
-- **Deployment**: React Router SPA served directly from `frontend/build/client/` in container
-- **SPA Mode**: Client-side routing with SSR disabled in react-router.config.ts
-- **Configuration**: Constants centralized in `frontend/app/config/constants.ts` module
+- **Framework**: SvelteKit with static adapter for SPA deployment
+- **Styling**: Tailwind CSS v4 with DaisyUI component library  
+- **Build Output**: Static files built to `frontend/build/` directory
+- **Deployment**: SvelteKit SPA served directly from `frontend/build/` in container
+- **SPA Mode**: Client-side routing with SSR disabled in `+layout.ts`
+- **Configuration**: Constants centralized in `frontend/src/lib/config/constants.ts` module
+- **Testing**: Unified Playwright test suite for all frontend tests
 
 ### Key Implementation Details
 
@@ -108,7 +113,7 @@ docker-compose build         # Rebuild image
   - `alpine:latest` for runtime
 - Volume mount: `./pb_data:/app/pb_data` for data persistence
 - Static binary: Built with `CGO_ENABLED=0` for Alpine compatibility
-- Frontend served from `frontend/build/client/` directory using PocketBase's apis.Static() handler
+- Frontend served from `frontend/build/` directory using PocketBase's apis.Static() handler
 
 ### Migrations
 
