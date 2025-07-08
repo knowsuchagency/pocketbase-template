@@ -29,21 +29,18 @@ git clone <repository-url>
 cd pocketbase-template
 ```
 
-2. Install dependencies
+2. Initialize the project
 ```bash
-just install-deps
-# Or manually:
-# go mod tidy
-# cd frontend && bun install
+just init
 ```
 
-3. Set environment variables for the initial superuser
-```bash
-export SUPERUSER_EMAIL="admin@example.com"
-export SUPERUSER_PASSWORD="your-secure-password"
-```
+This will:
+- Install all dependencies (frontend and backend)
+- Create a `.env` file if it doesn't exist
+- Prompt you to set superuser credentials
+- Configure direnv for automatic environment loading
 
-4. Run the development server (frontend and backend concurrently)
+3. Run the development server (frontend and backend concurrently)
 ```bash
 just dev
 ```
@@ -54,7 +51,12 @@ This will start:
 
 ### Docker Deployment
 
-1. Create a `.env` file with your configuration
+1. Initialize the project and create configuration
+```bash
+just init
+```
+
+Or manually create a `.env` file:
 ```env
 SUPERUSER_EMAIL=admin@example.com
 SUPERUSER_PASSWORD=your-secure-password
