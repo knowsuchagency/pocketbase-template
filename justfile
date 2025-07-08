@@ -54,6 +54,10 @@ test:
     go test -v ./...
     cd frontend && bun run test
 
+# Run playwright tests in UI mode
+playwright:
+    cd frontend && bun run test:ui
+
 # Create a new database migration with the specified name (defaults to "initial_superuser")
 makemigration name:
     echo "y" | go run . migrate create "{{name}}"

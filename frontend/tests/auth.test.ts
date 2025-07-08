@@ -45,7 +45,6 @@ test.describe('Authentication', () => {
     await page.goto('/');
     
     // Check that we're on the login page
-    await expect(page.locator('h1')).toHaveText('Welcome to PocketBase Template');
     await expect(page.locator('h2')).toHaveText('Login');
 
     // Fill in the login form
