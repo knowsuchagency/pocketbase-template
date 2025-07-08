@@ -8,25 +8,51 @@ import (
 )
 
 func init() {
-    m.Register(func(app core.App) error {
-        superusers, err := app.FindCollectionByNameOrId(core.CollectionNameSuperusers)
-        if err != nil {
-            return err
-        }
+	m.Register(func(app core.App) error {
+		// Create superuser record
+		superusers, err := app.FindCollectionByNameOrId(core.CollectionNameSuperusers)
+		if err != nil {
+			return err
+		}
 
-        record := core.NewRecord(superusers)
+		superuserRecord := core.NewRecord(superusers)
+		superuserRecord.Set("email", os.Getenv("SUPERUSER_EMAIL"))
+		superuserRecord.Set("password", os.Getenv("SUPERUSER_PASSWORD"))
+		superuserRecord.Set("passwordConfirm", os.Getenv("SUPERUSER_PASSWORD"))
 
-        record.Set("email", os.Getenv("SUPERUSER_EMAIL"))
-        record.Set("password", os.Getenv("SUPERUSER_PASSWORD"))
-        record.Set("passwordConfirm", os.Getenv("SUPERUSER_PASSWORD"))
+		if err := app.Save(superuserRecord); err != nil {
+			return err
+		}
 
-        return app.Save(record)
-    }, func(app core.App) error { // optional revert operation
-        record, _ := app.FindAuthRecordByEmail(core.CollectionNameSuperusers, os.Getenv("SUPERUSER_EMAIL"))
-        if record == nil {
-            return nil // probably already deleted
-        }
+		// Create regular user record
+		users, err := app.FindCollectionByNameOrId("users")
+		if err != nil {
+			return err
+		}
 
-        return app.Delete(record)
-    })
+		userRecord := core.NewRecord(users)
+		userRecord.Set("email", os.Getenv("SUPERUSER_EMAIL"))
+		userRecord.Set("password", os.Getenv("SUPERUSER_PASSWORD"))
+		userRecord.Set("passwordConfirm", os.Getenv("SUPERUSER_PASSWORD"))
+
+		return app.Save(userRecord)
+	}, func(app core.App) error { // optional revert operation
+		// Delete superuser record
+		superuserRecord, _ := app.FindAuthRecordByEmail(core.CollectionNameSuperusers, os.Getenv("SUPERUSER_EMAIL"))
+		if superuserRecord != nil {
+			if err := app.Delete(superuserRecord); err != nil {
+				return err
+			}
+		}
+
+		// Delete regular user record
+		userRecord, _ := app.FindAuthRecordByEmail("users", os.Getenv("SUPERUSER_EMAIL"))
+		if userRecord != nil {
+			if err := app.Delete(userRecord); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }
