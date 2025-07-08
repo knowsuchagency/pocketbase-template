@@ -71,7 +71,9 @@ docker-compose build         # Rebuild image
 - **Frontend Serving**: Static files served from `frontend/build/client/` directory at root path
 - **Migration System**: Automatic migration support with `migratecmd` plugin
 - **Module Import**: Migrations imported as `_ "app/migrations"` in main.go
-- **Environment-based Configuration**: Superuser credentials via `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` (see `.env.example`)
+- **Environment-based Configuration**: 
+  - Backend: Superuser credentials via `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` (see `.env.example`)
+  - Frontend: Backend URL via `VITE_BACKEND_URL` environment variable
 
 ### Frontend Architecture
 - **Framework**: React Router v7 with SSR disabled for SPA deployment
@@ -79,6 +81,7 @@ docker-compose build         # Rebuild image
 - **Build Output**: Static files built to `frontend/build/client/` directory
 - **Deployment**: React Router SPA served directly from `frontend/build/client/` in container
 - **SPA Mode**: Client-side routing with SSR disabled in react-router.config.ts
+- **Configuration**: Constants centralized in `frontend/app/config/constants.ts` module
 
 ### Key Implementation Details
 1. **Auto-migration**: Enabled only during development (detected via `go run` execution)

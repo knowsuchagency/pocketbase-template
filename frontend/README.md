@@ -86,8 +86,10 @@ export default {
 ### PocketBase Integration
 
 The frontend connects to PocketBase API at:
-- Development: `http://localhost:8090`
+- Development: `http://localhost:8090` (configured via `VITE_BACKEND_URL`)
 - Production: Same origin (served by PocketBase)
+
+Backend URL configuration is centralized in `app/config/constants.ts`.
 
 ## Available Scripts
 
@@ -125,7 +127,7 @@ This project uses:
 Create a `.env` file for local development:
 
 ```env
-POCKETBASE_URL=http://localhost:8090
+VITE_BACKEND_URL=http://localhost:8090
 ```
 
 ## Deployment
