@@ -286,4 +286,4 @@ Then edit the generated file in the `migrations/` directory. For collection migr
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License - see [LICENSE](LICENSE) file for details
