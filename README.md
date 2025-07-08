@@ -93,7 +93,7 @@ bun run typecheck  # Run TypeScript type checking
 - `just makemigration "name"` - Create new migration file
 - `just migrate` - Run pending migrations
 - `just migratedown` - Rollback last migration
-- `just show-collections` - Show all collections in human/LLM readable format
+- `just show-collections` - Show all collections in human/LLM readable format (use `--show-hidden` flag to include hidden collections)
 - `just reset` - Reset the database (WARNING: deletes all data)
 
 ### Testing
@@ -132,12 +132,16 @@ bun run typecheck  # Run TypeScript type checking
 - **Auto-migration**: Enabled only during development (detected via `go run` execution)
 - **Static File Serving**: Frontend build served from `frontend/build/client/`
 - **Custom Routes**: Register via `app.OnServe().BindFunc()` callback
+- **Environment-based Configuration**: Superuser credentials via `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD`
+- **Documentation**: Use `go doc` to view PocketBase documentation (e.g., `go doc github.com/pocketbase/pocketbase/core`)
 
 ### Frontend
 - **Framework**: React Router v7 with SSR disabled for SPA deployment
 - **Styling**: Tailwind CSS v4 with DaisyUI component library
 - **Build Output**: Static files built to `frontend/build/client/`
 - **SPA Mode**: Client-side routing with SSR disabled
+- **Environment-based Configuration**: Backend URL via `VITE_BACKEND_URL` environment variable
+- **Configuration**: Constants centralized in `frontend/app/config/constants.ts` module
 
 ### Docker Setup
 - Multi-stage build with:
@@ -183,8 +187,12 @@ Then edit the generated file in the `migrations/` directory. For collection migr
 
 ## Environment Variables
 
+### Backend
 - `SUPERUSER_EMAIL` - Email for the initial admin user
 - `SUPERUSER_PASSWORD` - Password for the initial admin user
+
+### Frontend
+- `VITE_BACKEND_URL` - Backend URL for development (defaults to `http://localhost:8090`)
 
 ## License
 
