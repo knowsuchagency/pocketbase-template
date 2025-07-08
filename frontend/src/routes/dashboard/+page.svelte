@@ -4,7 +4,7 @@
   import pb from '$lib/pocketbase';
   import { currentUser } from '$lib/stores/auth';
 
-  $: user = $currentUser;
+  let user = $derived($currentUser);
 
   onMount(() => {
     if (!$currentUser) {
@@ -26,7 +26,7 @@
       </div>
       <div class="flex-none gap-4">
         <span class="text-sm">Welcome, {user.email}</span>
-        <button class="btn btn-outline btn-sm" on:click={handleLogout}>
+        <button class="btn btn-outline btn-sm" onclick={handleLogout}>
           Logout
         </button>
       </div>

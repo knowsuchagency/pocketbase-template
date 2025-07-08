@@ -2,10 +2,10 @@
   import { goto } from '$app/navigation';
   import pb from '$lib/pocketbase';
 
-  let email = '';
-  let password = '';
-  let error = '';
-  let isLoading = false;
+  let email = $state('');
+  let password = $state('');
+  let error = $state('');
+  let isLoading = $state(false);
 
   async function handleSubmit(e: Event) {
     e.preventDefault();
@@ -36,7 +36,7 @@
       </div>
     {/if}
 
-    <form on:submit={handleSubmit} class="space-y-6">
+    <form onsubmit={handleSubmit} class="space-y-6">
       <div class="form-control w-full">
         <label class="label pb-1" for="email">
           <span class="label-text text-sm font-medium">Email</span>

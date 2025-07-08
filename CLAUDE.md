@@ -189,6 +189,7 @@ docker-compose build         # Rebuild image
 - **SPA Mode**: Client-side routing with SSR disabled in `+layout.ts`
 - **Configuration**: Constants centralized in `frontend/src/lib/config/constants.ts` module
 - **Testing**: Unified Playwright test suite for all frontend tests
+- **State Management**: Use explicit `$state` and `$derived` runes for reactive state
 
 ### Key Implementation Details
 
@@ -233,11 +234,43 @@ app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 Add new routes in `frontend/src/routes/`:
 ```svelte
 <!-- frontend/src/routes/dashboard/+page.svelte -->
-<script>
-  // Your component logic here
+<script lang="ts">
+  // Use explicit $state runes for reactive state
+  let count = $state(0);
+  let doubled = $derived(count * 2);
 </script>
 
 <div>Dashboard Page</div>
+```
+
+### State Management Guidelines
+
+Always use explicit Svelte 5 runes for state management:
+
+1. **Local State**: Use `$state()` for reactive values
+```svelte
+<script lang="ts">
+  let email = $state('');
+  let isLoading = $state(false);
+</script>
+```
+
+2. **Derived Values**: Use `$derived()` for computed values
+```svelte
+<script lang="ts">
+  let user = $derived($currentUser);
+  let isValid = $derived(email.length > 0 && password.length > 0);
+</script>
+```
+
+3. **Effects**: Use `$effect()` instead of lifecycle functions when possible
+```svelte
+<script lang="ts">
+  $effect(() => {
+    // React to state changes
+    console.log('User changed:', user);
+  });
+</script>
 ```
 
 ### Creating Migrations
