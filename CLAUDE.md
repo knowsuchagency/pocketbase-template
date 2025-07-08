@@ -210,6 +210,7 @@ docker-compose build         # Rebuild image
 ### Migrations
 
 - Use the `just makemigration` recipe to create a migration
+- **Automatic Migration Generation**: When running in development mode (`just dev` or `go run . serve --dev`), PocketBase will automatically generate migration files when you make collection changes through the admin dashboard. This is configured in `main.go` via the `Automigrate` setting
 - For migrations that create or update Collections, read the latest documentation on https://pocketbase.io/docs/go-collections/ before writing any code
 
 ## Extending the Template
