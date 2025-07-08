@@ -12,6 +12,9 @@ import (
 
 func main() {
 	app := pocketbase.New()
+	
+	// Add custom flag to the app's root command
+	showHidden := app.RootCmd.PersistentFlags().Bool("show-hidden", false, "Show hidden collections (those starting with underscore)")
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		collections, err := app.FindAllCollections()
@@ -19,9 +22,27 @@ func main() {
 			return err
 		}
 
-		fmt.Printf("=== PocketBase Collections (%d total) ===\n\n", len(collections))
+		// Filter collections based on show-hidden flag
+		visibleCollections := []*core.Collection{}
+		hiddenCount := 0
+		for _, collection := range collections {
+			if strings.HasPrefix(collection.Name, "_") {
+				hiddenCount++
+				if *showHidden {
+					visibleCollections = append(visibleCollections, collection)
+				}
+			} else {
+				visibleCollections = append(visibleCollections, collection)
+			}
+		}
 
-		for i, collection := range collections {
+		if *showHidden {
+			fmt.Printf("=== PocketBase Collections (%d total, including %d hidden) ===\n\n", len(collections), hiddenCount)
+		} else {
+			fmt.Printf("=== PocketBase Collections (%d visible, %d hidden) ===\n\n", len(visibleCollections), hiddenCount)
+		}
+
+		for i, collection := range visibleCollections {
 			fmt.Printf("%d. %s (%s)\n", i+1, collection.Name, collection.Type)
 			fmt.Printf("   ID: %s\n", collection.Id)
 			

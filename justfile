@@ -80,8 +80,13 @@ check-updates:
     go list -m -u all
 
 # Show all collections in a human and LLM readable format
-show-collections:
-    go run cmd/show-collections.go serve
+show-collections show-hidden="false":
+    #!/bin/bash
+    if [[ "{{show-hidden}}" == "true" ]]; then
+        go run cmd/show-collections.go serve --show-hidden
+    else
+        go run cmd/show-collections.go serve
+    fi
 
 # Reset the database
 reset:
