@@ -59,7 +59,79 @@ func main() {
 				if len(collection.Fields) > 0 {
 					fmt.Printf("   Fields (%d):\n", len(collection.Fields))
 					for _, field := range collection.Fields {
-						fmt.Printf("     - %s: %s\n", field.GetName(), field.Type())
+						fieldInfo := fmt.Sprintf("     - %s: %s", field.GetName(), field.Type())
+						
+						// Add additional info for relation fields
+						if field.Type() == core.FieldTypeRelation {
+							if relField, ok := field.(*core.RelationField); ok {
+								relationType := "one-to-one"
+								if relField.IsMultiple() {
+									relationType = fmt.Sprintf("one-to-many (max: %d)", relField.MaxSelect)
+								}
+								fieldInfo += fmt.Sprintf(" [%s, collection: %s]", relationType, relField.CollectionId)
+								if relField.CascadeDelete {
+									fieldInfo += " (cascade delete)"
+								}
+							}
+						}
+						
+						// Add additional info for file fields  
+						if field.Type() == core.FieldTypeFile {
+							if fileField, ok := field.(*core.FileField); ok {
+								if fileField.MaxSelect > 1 {
+									fieldInfo += fmt.Sprintf(" [max files: %d]", fileField.MaxSelect)
+								}
+							}
+						}
+						
+						// Add additional info for text fields
+						if field.Type() == core.FieldTypeText {
+							if textField, ok := field.(*core.TextField); ok {
+								if textField.Max > 0 {
+									fieldInfo += fmt.Sprintf(" [max length: %d]", textField.Max)
+								}
+								if textField.Min > 0 {
+									fieldInfo += fmt.Sprintf(" [min length: %d]", textField.Min)
+								}
+							}
+						}
+						
+						// Add additional info for select fields
+						if field.Type() == core.FieldTypeSelect {
+							if selectField, ok := field.(*core.SelectField); ok {
+								if len(selectField.Values) > 0 {
+									fieldInfo += fmt.Sprintf(" [options: %v]", selectField.Values)
+								}
+								if selectField.MaxSelect > 1 {
+									fieldInfo += fmt.Sprintf(" [max select: %d]", selectField.MaxSelect)
+								}
+							}
+						}
+						
+						// Add required indicator
+						if field.GetId() != "" {
+							// Check if field implements required interface
+							switch f := field.(type) {
+							case *core.TextField:
+								if f.Required {
+									fieldInfo += " (required)"
+								}
+							case *core.RelationField:
+								if f.Required {
+									fieldInfo += " (required)"
+								}
+							case *core.FileField:
+								if f.Required {
+									fieldInfo += " (required)"
+								}
+							case *core.SelectField:
+								if f.Required {
+									fieldInfo += " (required)"
+								}
+							}
+						}
+						
+						fmt.Println(fieldInfo)
 					}
 				}
 				
