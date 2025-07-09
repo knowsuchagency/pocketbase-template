@@ -14,6 +14,7 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 - 🔐 Environment-based superuser initialization
 - 🏥 Health check endpoint at `/health`
 - 🗄️ State Management with Zustand
+- 🧪 End-to-end testing with Playwright
 
 ## Prerequisites
 
@@ -96,6 +97,11 @@ bun run dev                  # Start development server
 bun run build                # Build static files (outputs to frontend/build/client)
 bun run start                # Start production server
 bun run typecheck            # Run TypeScript type checking
+bun run test                 # Run Playwright tests
+bun run test:ui              # Run tests with interactive UI mode
+bun run test:headed          # Run tests in headed browser mode
+bun run test:debug           # Debug tests interactively
+bun run test:report          # Open HTML test report
 ```
 
 ### Database Migrations
@@ -111,7 +117,9 @@ just reset                   # Reset the database (WARNING: deletes all data)
 ### Testing
 
 ```bash
-just test                    # Run all tests
+just test                    # Run all tests (backend and frontend)
+just test-backend            # Run Go backend tests  
+just test-frontend           # Run Playwright frontend tests
 ```
 
 ### Dependency Management
@@ -147,6 +155,7 @@ docker-compose build         # Rebuild image
 - **Framework**: React Router v7 with SSR disabled for SPA deployment
 - **Styling**: Tailwind CSS v4 with DaisyUI component library
 - **State Management**: Zustand for global state management
+- **Testing**: Playwright for end-to-end functional testing
 - **Build Output**: Static files built to `frontend/build/client/` directory
 - **Deployment**: React Router SPA served directly from `frontend/build/client/` in container
 - **SPA Mode**: Client-side routing with SSR disabled in react-router.config.ts
@@ -172,6 +181,16 @@ Key features:
 - DevTools integration for debugging
 - Persistence middleware for auth state
 - Automatic PocketBase auth synchronization
+
+#### Testing with Playwright
+
+The frontend includes comprehensive end-to-end testing using Playwright:
+
+- **Test Configuration**: `frontend/playwright.config.ts` configures test settings
+- **Automatic Server Startup**: PocketBase server starts automatically before tests
+- **Browser Support**: Tests run in Chromium, Firefox, and WebKit
+- **Test Location**: Test specs in `frontend/tests/` directory
+- **Base URL**: Tests run against `http://localhost:8090` (built frontend served by PocketBase)
 
 ### Key Implementation Details
 
@@ -212,7 +231,9 @@ Key features:
 │   ├── public/           # Static assets
 │   ├── build/            # Build output (gitignored)
 │   │   └── client/       # Static files served by PocketBase
+│   ├── tests/            # Playwright end-to-end tests
 │   ├── package.json      # Frontend dependencies
+│   ├── playwright.config.ts # Playwright test configuration
 │   ├── tailwind.config.ts # Tailwind CSS v4 configuration
 │   └── react-router.config.ts # React Router configuration
 ├── Dockerfile             # Multi-stage Docker build
