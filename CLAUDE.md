@@ -1,15 +1,74 @@
-# CLAUDE.md
+# PocketBase Template
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+A modern full-stack template featuring a Go-based [PocketBase](https://pocketbase.io/) backend and React Router v7 SPA frontend with Tailwind CSS and DaisyUI.
 
-## Project Overview
+This file also provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-This is a PocketBase template project with:
+## Features
 
-- **Backend**: Go-based backend-as-a-service (BaaS) application built on PocketBase
-- **Frontend**: React Router v7 SPA (Single Page Application) with Tailwind CSS and DaisyUI
+- 🚀 PocketBase backend-as-a-service framework (v0.28+)
+- ⚛️ React Router v7 SPA with Tailwind CSS v4 and DaisyUI
+- 🐳 Docker and Docker Compose configuration with multi-stage builds
+- 📦 Database migration system with automatic migrations in development
+- 🛠️ Task automation with `just` for concurrent development
+- 🔐 Environment-based superuser initialization
+- 🏥 Health check endpoint at `/health`
+- 🗄️ State Management with Zustand
 
-**NOTE:** The version of pocketbase used is greater than v0.28 which introduced several breaking changes.
+## Prerequisites
+
+- Go 1.24 or higher
+- [Bun](https://bun.sh/) for frontend development
+- Docker and Docker Compose (for containerized deployment)
+- [just](https://github.com/casey/just) task runner (optional but recommended)
+
+## Quick Start
+
+### Local Development
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd pocketbase-template
+```
+
+2. Initialize the project
+```bash
+just init
+```
+
+This will:
+- Install all dependencies (frontend and backend)
+- Create a `.env` file if it doesn't exist
+- Prompt you to set superuser credentials
+- Configure direnv for automatic environment loading
+
+3. Run the development server (frontend and backend concurrently)
+```bash
+just dev
+```
+
+This will start:
+- PocketBase server at `http://localhost:8090` (admin UI at `http://localhost:8090/_/`)
+- Frontend dev server at `http://localhost:5173`
+
+### Docker Deployment
+
+1. Initialize the project and create configuration
+```bash
+just init
+```
+
+Or manually create a `.env` file:
+```env
+SUPERUSER_EMAIL=admin@example.com
+SUPERUSER_PASSWORD=your-secure-password
+```
+
+2. Build and run with Docker Compose
+```bash
+docker-compose up -d
+```
 
 ## Essential Commands
 
@@ -45,7 +104,7 @@ bun run typecheck            # Run TypeScript type checking
 just makemigration "name"    # Create new migration file
 just migrate                 # Run pending migrations
 just migratedown             # Rollback last migration
-just show-collections        # Show all collections in human/LLM readable format
+just show-collections        # Show all collections in human/LLM readable format (use --show-hidden flag to include hidden collections)
 just reset                   # Reset the database (WARNING: deletes all data)
 ```
 
@@ -87,10 +146,32 @@ docker-compose build         # Rebuild image
 
 - **Framework**: React Router v7 with SSR disabled for SPA deployment
 - **Styling**: Tailwind CSS v4 with DaisyUI component library
+- **State Management**: Zustand for global state management
 - **Build Output**: Static files built to `frontend/build/client/` directory
 - **Deployment**: React Router SPA served directly from `frontend/build/client/` in container
 - **SPA Mode**: Client-side routing with SSR disabled in react-router.config.ts
 - **Configuration**: Constants centralized in `frontend/app/config/constants.ts` module
+
+#### State Management with Zustand
+
+The frontend uses Zustand for global state management with the following stores:
+
+- **Auth Store** (`frontend/app/stores/auth.store.ts`): 
+  - Manages user authentication state
+  - Handles login/logout operations
+  - Persists auth state across sessions
+  - Syncs with PocketBase's authStore
+
+- **App Store** (`frontend/app/stores/app.store.ts`):
+  - Manages global application state
+  - Handles notifications system
+  - Manages loading states
+
+Key features:
+- TypeScript support with proper typing
+- DevTools integration for debugging
+- Persistence middleware for auth state
+- Automatic PocketBase auth synchronization
 
 ### Key Implementation Details
 
@@ -114,3 +195,75 @@ docker-compose build         # Rebuild image
 
 - Use the `just makemigration` recipe to create a migration
 - For migrations that create or update Collections, read the latest documentation on https://pocketbase.io/docs/go-collections/ before writing any code
+
+## Project Structure
+
+```
+├── main.go                 # Application entry point
+├── migrations/             # Database migrations
+│   └── 1749628624_initial_superuser.go
+├── pb_data/               # PocketBase data (gitignored)
+├── frontend/              # React Router v7 SPA
+│   ├── app/              # Application routes and components
+│   │   ├── stores/       # Zustand state management
+│   │   ├── components/   # React components
+│   │   ├── routes/       # Route components
+│   │   └── lib/          # Utilities and PocketBase client
+│   ├── public/           # Static assets
+│   ├── build/            # Build output (gitignored)
+│   │   └── client/       # Static files served by PocketBase
+│   ├── package.json      # Frontend dependencies
+│   ├── tailwind.config.ts # Tailwind CSS v4 configuration
+│   └── react-router.config.ts # React Router configuration
+├── Dockerfile             # Multi-stage Docker build
+├── docker-compose.yml     # Container orchestration
+├── justfile              # Task automation
+└── go.mod                # Go module definition
+```
+
+## Extending the Template
+
+### Adding Custom Backend Routes
+
+Add routes in the `OnServe` callback in `main.go`:
+
+```go
+app.OnServe().BindFunc(func(se *core.ServeEvent) error {
+    se.Router.GET("/api/custom", func(re *core.RequestEvent) error {
+        return re.JSON(200, map[string]string{"message": "Custom endpoint"})
+    })
+    return se.Next()
+})
+```
+
+### Creating Frontend Routes
+
+Add new routes in `frontend/app/routes/`:
+```tsx
+// frontend/app/routes/dashboard.tsx
+export default function Dashboard() {
+  return <div>Dashboard Page</div>;
+}
+```
+
+### Creating Migrations
+
+Generate a new migration:
+```bash
+just makemigration "add_custom_collection"
+```
+
+Then edit the generated file in the `migrations/` directory. For collection migrations, refer to the [PocketBase documentation](https://pocketbase.io/docs/go-collections/).
+
+## Environment Variables
+
+### Backend
+- `SUPERUSER_EMAIL` - Email for the initial admin user
+- `SUPERUSER_PASSWORD` - Password for the initial admin user
+
+### Frontend
+- `VITE_BACKEND_URL` - Backend URL for development (defaults to `http://localhost:8090`)
+
+## License
+
+MIT License - see LICENSE file for details
