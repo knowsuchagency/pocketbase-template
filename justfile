@@ -49,9 +49,16 @@ build:
     cd frontend && bun run build
     go build -o pocketbase main.go
 
-# Run all tests
-test:
+# Run backend tests
+test-backend:
     go test -v ./...
+
+# Run frontend tests
+test-frontend:
+    cd frontend && bun run test
+
+# Run all tests
+test: test-backend test-frontend
 
 # Create a new database migration with the specified name (defaults to "initial_superuser")
 makemigration name:
