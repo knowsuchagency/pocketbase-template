@@ -1,29 +1,37 @@
-import { useState, type FormEvent } from "react";
-import pb from "../lib/pocketbase";
+import { useState, type FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useAuthStore } from "~/stores/auth.store";
+import { useAppStore } from "~/stores/app.store";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  
+  const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
+  const { addNotification } = useAppStore();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    clearError();
+  }, [clearError]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
+    
     try {
-      const authData = await pb
-        .collection("users")
-        .authWithPassword(email, password);
-      console.log("Logged in successfully:", authData);
+      await login(email, password);
       navigate("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Failed to login");
-    } finally {
-      setIsLoading(false);
+    } catch (err) {
+      addNotification({
+        type: 'error',
+        message: error || 'Failed to login'
+      });
     }
   };
 

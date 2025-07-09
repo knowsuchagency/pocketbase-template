@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router';
-import pb from '../lib/pocketbase';
+import { useAuthStore } from '~/stores/auth.store';
+import { useEffect } from 'react';
 
 export function meta() {
   return [
@@ -10,15 +11,20 @@ export function meta() {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const user = pb.authStore.record;
+  const { user, isAuthenticated, logout } = useAuthStore();
 
-  const handleLogout = () => {
-    pb.authStore.clear();
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 
   if (!user) {
-    navigate('/');
     return null;
   }
 
