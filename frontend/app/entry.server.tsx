@@ -1,32 +1,43 @@
-import { type AppLoadContext, type EntryContext, ServerRouter } from "react-router";
-import { renderToReadableStream } from "react-dom/server";
+import type { AppLoadContext, EntryContext } from "react-router";
+import { ServerRouter } from "react-router";
 import { isbot } from "isbot";
+import { renderToReadableStream } from "react-dom/server";
 
 export default async function handleRequest(
   request: Request,
-  status: number,
-  headers: Headers,
-  reactRouterContext: EntryContext,
-  loadContext: AppLoadContext
+  responseStatusCode: number,
+  responseHeaders: Headers,
+  routerContext: EntryContext,
+  _loadContext: AppLoadContext,
 ) {
-  const body = await renderToReadableStream(
-    <ServerRouter context={reactRouterContext} url={request.url} />,
-    {
-      signal: request.signal,
-      onError(error: unknown) {
-        // Log streaming rendering errors from inside the shell
-        console.error(error);
-        status = 500;
-      },
-    }
-  );
+  let shellRendered = false;
+  const userAgent = request.headers.get("user-agent");
 
-  // If the request is from a bot, wait for the stream to finish so they can
-  // get the full HTML document.
-  if (isbot(request.headers.get("user-agent") || "")) {
+  const body = await renderToReadableStream(
+    <ServerRouter context={routerContext} url={request.url} />,
+    {
+      onError(error: unknown) {
+        responseStatusCode = 500;
+        // Log streaming rendering errors from inside the shell.  Don't log
+        // errors encountered during initial shell rendering since they'll
+        // reject and get logged in handleDocumentRequest.
+        if (shellRendered) {
+          console.error(error);
+        }
+      },
+    },
+  );
+  shellRendered = true;
+
+  // Ensure requests from bots and SPA Mode renders wait for all content to load before responding
+  // https://react.dev/reference/react-dom/server/renderToPipeableStream#waiting-for-all-content-to-load-for-crawlers-and-static-generation
+  if ((userAgent && isbot(userAgent)) || routerContext.isSpaMode) {
     await body.allReady;
   }
 
-  headers.set("Content-Type", "text/html; charset=utf-8");
-  return new Response(body, { status, headers });
+  responseHeaders.set("Content-Type", "text/html");
+  return new Response(body, {
+    headers: responseHeaders,
+    status: responseStatusCode,
+  });
 }
