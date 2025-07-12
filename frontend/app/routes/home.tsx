@@ -1,19 +1,33 @@
-import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
+import { LoginForm } from '~/components/LoginForm';
+import { useAuthStore } from '~/stores/auth.store';
+import type { Route } from './+types/home';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: 'Login - PocketBase Template' },
+    { name: 'description', content: 'Login to your account' },
   ];
 }
 
-export function loader({ context }: Route.LoaderArgs) {
-  return {
-    message: (context.cloudflare as { env: Env }).env.VALUE_FROM_CLOUDFLARE,
-  };
-}
+export default function Home() {
+  const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-export default function Home({ loaderData }: Route.ComponentProps) {
-  return <Welcome message={loaderData.message} />;
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (isAuthenticated) {
+    return null; // Don't render anything while redirecting
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <LoginForm />
+    </div>
+  );
 }

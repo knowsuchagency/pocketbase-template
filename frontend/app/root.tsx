@@ -6,6 +6,9 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { useEffect } from "react";
+import { useAuthStore } from "~/stores/auth.store";
+import { NotificationList } from "~/components/NotificationList";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -42,7 +45,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
+  useEffect(() => {
+    // Check auth on mount
+    checkAuth();
+  }, [checkAuth]);
+
+  return (
+    <>
+      <Outlet />
+      <NotificationList />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

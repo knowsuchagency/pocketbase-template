@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "example-app",
+	"name": "pocketbase-template-frontend",
 	"compatibility_date": "2025-04-01",
 	"main": "./workers/app.ts",
 	"vars": {

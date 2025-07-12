@@ -1,33 +1,3 @@
-# Frontend dependency stage
-FROM oven/bun:1 AS frontend-deps
-
-WORKDIR /frontend
-
-# Copy frontend package files
-COPY frontend/package.json frontend/bun.lock ./
-
-# Install frontend dependencies with bun
-RUN bun install
-
-# Frontend build stage
-FROM node:20-slim AS frontend-builder
-
-WORKDIR /frontend
-
-# Copy package files and installed dependencies from bun stage
-COPY --from=frontend-deps /frontend/package.json /frontend/bun.lock ./
-COPY --from=frontend-deps /frontend/node_modules ./node_modules
-
-# Copy frontend source code
-COPY frontend/ ./
-
-# Add build argument for API URL
-ARG POCKETBASE_URL
-ENV POCKETBASE_URL=$POCKETBASE_URL
-
-# Build frontend with npm (using react-router build)
-RUN npm run build
-
 # Backend build stage
 FROM golang:1.24-alpine AS backend-builder
 
@@ -56,10 +26,6 @@ RUN apk add --no-cache ca-certificates
 
 # Copy binary from backend builder
 COPY --from=backend-builder /build/pocketbase .
-
-# Copy built frontend from frontend builder
-# SvelteKit static adapter outputs to 'build' directory
-COPY --from=frontend-builder /frontend/build/client ./frontend/build/client
 
 # Create data directory
 RUN mkdir -p /app/pb_data

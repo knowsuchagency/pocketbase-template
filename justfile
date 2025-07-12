@@ -1,8 +1,7 @@
 set dotenv-load
 
-# Install all dependencies
+# Install backend dependencies
 install-deps:
-    cd frontend && bun install
     go mod tidy
 
 # Initialize the project
@@ -32,28 +31,28 @@ init: install-deps
     fi
     direnv allow
 
-# Run bun dev server
-dev-bun:
+# Run frontend dev server (run from frontend directory)
+dev-frontend:
     cd frontend && bun run dev
 
 # Start the PocketBase development server
 dev-pb:
     go run main.go serve --dev
 
-# Run bun and pocketbase in dev mode
+# Run backend in dev mode (frontend should be run separately)
 dev:
-    npx concurrently --names "FRONTEND,BACKEND" --prefix-colors "cyan,magenta" "just dev-bun" "just dev-pb"
+    npx concurrently "cd frontend && bun run dev" "go run main.go serve --dev"
 
-# Build frontend and backend
+# Build backend only (frontend built separately for Cloudflare deployment)
 build:
-    cd frontend && bun run build
     go build -o pocketbase main.go
+    cd frontend && bun run build
 
 # Run backend tests
 test-backend:
     go test -v ./...
 
-# Run frontend tests
+# Run frontend tests (run from frontend directory)
 test-frontend:
     cd frontend && bun run test
 
