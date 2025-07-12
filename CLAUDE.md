@@ -22,7 +22,6 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 - 🏥 Health check endpoint at `/health`
 - 🗄️ State Management with Zustand
 - 🧪 End-to-end testing with Playwright
-- 🌍 CORS configured for external frontend hosting
 
 ## Prerequisites
 
@@ -89,7 +88,6 @@ The frontend will start at `http://localhost:5173`
 ```env
 SUPERUSER_EMAIL=admin@example.com
 SUPERUSER_PASSWORD=your-secure-password
-CORS_ALLOWED_ORIGINS=https://your-frontend-domain.com
 ```
 
 2. Build and run with Docker Compose
@@ -150,11 +148,10 @@ The frontend tests are configured to:
 
 - **PocketBase Application**: Single binary with embedded SQLite database
 - **Migration System**: Automatic migration support with `migratecmd` plugin
-- **CORS Configuration**: Configured via `CORS_ALLOWED_ORIGINS` environment variable
+- **CORS**: PocketBase handles CORS automatically (allows all origins by default since it's stateless)
 - **No Frontend Serving**: Backend serves only API endpoints, not static files
 - **Environment Variables**:
   - `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` for initial admin setup
-  - `CORS_ALLOWED_ORIGINS` for allowed frontend origins
 
 ### Frontend Architecture
 
@@ -225,7 +222,6 @@ docker run -d \
   -v ./pb_data:/app/pb_data \
   -e SUPERUSER_EMAIL=admin@example.com \
   -e SUPERUSER_PASSWORD=secure-password \
-  -e CORS_ALLOWED_ORIGINS=https://your-app.pages.dev \
   pocketbase-app
 ```
 
@@ -258,7 +254,6 @@ wrangler secret put VITE_BACKEND_URL
 ├── main.go                 # Backend entry point
 ├── migrations/             # Database migrations
 ├── routes/                 # Backend route handlers
-│   ├── cors.go            # CORS configuration
 │   ├── health.go          # Health check endpoint
 │   └── routes.go          # Route registration
 ├── pb_data/               # PocketBase data (gitignored)
@@ -370,14 +365,13 @@ func init() {
 ### Backend
 - `SUPERUSER_EMAIL` - Email for the initial admin user
 - `SUPERUSER_PASSWORD` - Password for the initial admin user
-- `CORS_ALLOWED_ORIGINS` - Comma-separated list of allowed frontend origins
 
 ### Frontend
 - `VITE_BACKEND_URL` - Backend API URL (defaults to `http://localhost:8090`)
 
 ## Security Considerations
 
-1. **CORS**: Configure `CORS_ALLOWED_ORIGINS` properly in production
+1. **CORS**: PocketBase allows all origins by default (stateless API)
 2. **Authentication**: All API requests should include PocketBase auth tokens
 3. **HTTPS**: Use HTTPS in production for both frontend and backend
 4. **Environment Variables**: Never commit sensitive values to version control
