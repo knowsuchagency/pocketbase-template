@@ -1,11 +1,15 @@
 .DS_Store
 /node_modules/
+*.tsbuildinfo
 
 # React Router
 /.react-router/
 /build/
 
-# Playwright
-/test-results/
-/playwright-report/
-/playwright/.cache/
+# Cloudflare
+.mf
+.wrangler
+.dev.vars*
+
+test-results/
+playwright-report/

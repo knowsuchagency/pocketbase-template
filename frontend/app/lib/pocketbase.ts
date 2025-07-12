@@ -1,11 +1,13 @@
 import PocketBase from 'pocketbase';
-import { BACKEND_URL } from '~/config/constants';
 
-// In production, the frontend is served from the same domain as PocketBase
-// In development, use VITE_BACKEND_URL to point to the local PocketBase instance
-const pb = new PocketBase(BACKEND_URL);
+// Get backend URL from environment or use default
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8090';
 
-// Optional: Enable auto cancellation of pending requests
+// Create and export PocketBase instance
+export const pb = new PocketBase(BACKEND_URL);
+
+// Auto-cancel requests on duplicate calls
 pb.autoCancellation(false);
 
-export default pb;
+// Export the backend URL for use in other parts of the app
+export { BACKEND_URL };

@@ -6,10 +6,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { useEffect } from "react";
+import { useAuthStore } from "~/stores/auth.store";
+import { NotificationList } from "~/components/NotificationList";
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { NotificationList } from "~/components/NotificationList";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -43,6 +45,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
+  useEffect(() => {
+    // Check auth on mount
+    checkAuth();
+  }, [checkAuth]);
+
   return (
     <>
       <Outlet />

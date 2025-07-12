@@ -1,43 +1,35 @@
 import { useAppStore } from '~/stores/app.store';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { X } from 'lucide-react';
+import { Button } from '~/components/ui/button';
 
 export function NotificationList() {
-  const { notifications, removeNotification } = useAppStore();
+  const notifications = useAppStore((state) => state.notifications);
+  const removeNotification = useAppStore((state) => state.removeNotification);
 
   if (notifications.length === 0) return null;
 
-  const getAlertClass = (type: string) => {
-    switch (type) {
-      case 'success':
-        return 'alert-success';
-      case 'error':
-        return 'alert-error';
-      case 'warning':
-        return 'alert-warning';
-      case 'info':
-        return 'alert-info';
-      default:
-        return '';
-    }
-  };
-
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2 max-w-md">
+    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 w-96 max-w-[calc(100vw-2rem)]">
       {notifications.map((notification) => (
-        <div
+        <Alert
           key={notification.id}
-          className={`alert ${getAlertClass(notification.type)} shadow-lg`}
+          variant={notification.type === 'error' ? 'destructive' : 'default'}
+          className="relative pr-10"
         >
-          <div className="flex-1">
-            <span>{notification.message}</span>
-          </div>
-          <button
+          <AlertTitle>{notification.title}</AlertTitle>
+          {notification.message && (
+            <AlertDescription>{notification.message}</AlertDescription>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="absolute top-2 right-2 h-6 w-6 p-0"
             onClick={() => removeNotification(notification.id)}
-            className="btn btn-ghost btn-sm"
           >
-            <X size={16} />
-          </button>
-        </div>
+            <X className="h-4 w-4" />
+          </Button>
+        </Alert>
       ))}
     </div>
   );

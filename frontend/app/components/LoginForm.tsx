@@ -1,117 +1,99 @@
-import { useState, type FormEvent, useEffect } from "react";
-import { useNavigate } from "react-router";
-import { useAuthStore } from "~/stores/auth.store";
-import { useAppStore } from "~/stores/app.store";
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useAuthStore } from '~/stores/auth.store';
+import { useAppStore } from '~/stores/app.store';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
+import { Eye, EyeOff } from 'lucide-react';
 
-export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export function LoginForm() {
   const navigate = useNavigate();
-  
-  const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
-  const { addNotification } = useAppStore();
+  const login = useAuthStore((state) => state.login);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const addNotification = useAppStore((state) => state.addNotification);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated, navigate]);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    clearError();
-  }, [clearError]);
-
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       await login(email, password);
-      navigate("/dashboard");
-    } catch (err) {
+      navigate('/dashboard');
+    } catch (error: any) {
       addNotification({
         type: 'error',
-        message: error || 'Failed to login'
+        title: 'Login failed',
+        message: error.message || 'Invalid email or password',
       });
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200">
-      <div className="card w-96 bg-base-100 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title text-2xl font-bold text-center w-full">
-            Login
-          </h2>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="form-control">
-              <label className="label mb-2">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                placeholder="email@example.com"
-                className="input input-bordered"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="form-control">
-              <label className="label mb-2">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                className="input input-bordered"
+    <Card className="w-full max-w-sm shadow-lg">
+      <form onSubmit={handleSubmit}>
+        <CardHeader className="space-y-1 pb-6">
+          <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="m@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={isLoading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                className="pr-10"
               />
-            </div>
-
-            {error && (
-              <div className="alert alert-error">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="stroke-current shrink-0 h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>{error}</span>
-              </div>
-            )}
-
-            <div className="form-control mt-6">
-              <button
-                type="submit"
-                className="btn btn-primary"
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => setShowPassword(!showPassword)}
                 disabled={isLoading}
               >
-                {isLoading ? (
-                  <>
-                    <span className="loading loading-spinner"></span>
-                    Logging in...
-                  </>
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                  "Login"
+                  <Eye className="h-4 w-4 text-muted-foreground" />
                 )}
-              </button>
+              </Button>
             </div>
-          </form>
-        </div>
-      </div>
-    </div>
+          </div>
+        </CardContent>
+        <CardFooter className="pt-2">
+          <Button 
+            type="submit" 
+            className="w-full h-11 font-medium" 
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging in...' : 'Login'}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
   );
 }
