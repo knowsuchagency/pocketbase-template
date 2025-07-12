@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useAuthStore } from '~/stores/auth.store';
-import { useAppStore } from '~/stores/app.store';
-import { Button } from '~/components/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/components/ui/card';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { useNavigate } from 'react-router';
 import type { Route } from './+types/dashboard';
 
@@ -18,7 +17,6 @@ export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
-  const addNotification = useAppStore((state) => state.addNotification);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -28,11 +26,6 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     logout();
-    addNotification({
-      type: 'info',
-      title: 'Logged out',
-      message: 'You have been logged out successfully',
-    });
     navigate('/');
   };
 
