@@ -102,3 +102,7 @@ reset:
     else
         echo "Reset cancelled."
     fi
+
+# Deploy to Cloudflare
+deploy:
+    cd frontend && bun run deploy
