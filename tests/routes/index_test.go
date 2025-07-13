@@ -1,10 +1,11 @@
-package routes
+package routes_test
 
 import (
 	"net/http"
 	"os"
 	"testing"
 
+	"app/routes"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tests"
 )
@@ -33,7 +34,7 @@ func TestIndexRoute(t *testing.T) {
 				return app
 			},
 			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-				RegisterIndex(e)
+				routes.RegisterIndex(e)
 			},
 		},
 		{
@@ -56,7 +57,7 @@ func TestIndexRoute(t *testing.T) {
 				return app
 			},
 			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-				RegisterIndex(e)
+				routes.RegisterIndex(e)
 			},
 			AfterTestFunc: func(t testing.TB, app *tests.TestApp, res *http.Response) {
 				// Clean up
@@ -85,7 +86,7 @@ func TestIndexRoute(t *testing.T) {
 				return app
 			},
 			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-				RegisterIndex(e)
+				routes.RegisterIndex(e)
 			},
 			AfterTestFunc: func(t testing.TB, app *tests.TestApp, res *http.Response) {
 				// Clean up
@@ -107,7 +108,7 @@ func TestIndexRoute(t *testing.T) {
 				return app
 			},
 			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-				RegisterIndex(e)
+				routes.RegisterIndex(e)
 			},
 		},
 		{
@@ -124,7 +125,7 @@ func TestIndexRoute(t *testing.T) {
 				return app
 			},
 			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-				RegisterIndex(e)
+				routes.RegisterIndex(e)
 			},
 		},
 		{
@@ -142,7 +143,7 @@ func TestIndexRoute(t *testing.T) {
 				return app
 			},
 			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-				RegisterIndex(e)
+				routes.RegisterIndex(e)
 			},
 		},
 	}

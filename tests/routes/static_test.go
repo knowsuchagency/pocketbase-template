@@ -1,4 +1,4 @@
-package routes
+package routes_test
 
 import (
 	"net/http"
@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"app/routes"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tests"
 )
@@ -45,7 +46,7 @@ func TestStaticRoute(t *testing.T) {
 			return app
 		},
 		BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-			RegisterStatic(e)
+			routes.RegisterStatic(e)
 		},
 	}
 
@@ -74,7 +75,7 @@ func TestStaticRouteWithMissingDirectory(t *testing.T) {
 			return app
 		},
 		BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-			RegisterStatic(e)
+			routes.RegisterStatic(e)
 		},
 	}
 

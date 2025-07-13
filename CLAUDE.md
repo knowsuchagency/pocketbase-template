@@ -267,6 +267,11 @@ wrangler secret put VITE_BACKEND_URL
 │   ├── health.go          # Health check endpoint
 │   ├── index.go           # Index route with DaisyUI landing page
 │   └── routes.go          # Route registration
+├── tests/                 # Backend Go tests
+│   └── routes/            # Route handler tests
+│       ├── health_test.go # Health endpoint tests
+│       ├── index_test.go  # Index route tests
+│       └── static_test.go # Static file serving tests
 ├── pb_data/               # PocketBase data (gitignored)
 ├── frontend/              # React Router v7 with Cloudflare Workers
 │   ├── app/              
