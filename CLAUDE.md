@@ -156,10 +156,10 @@ The frontend tests are configured to:
 - **Migration System**: Automatic migration support with `migratecmd` plugin
 - **CORS**: PocketBase handles CORS automatically (allows all origins by default since it's stateless)
 - **No Frontend Serving**: Backend serves only API endpoints, not static files
-- **Index Route**: Root path (`/`) redirects to frontend when `FRONTEND_URL` is set, returns 404 otherwise
+- **Index Route**: Root path (`/`) serves a DaisyUI-styled HTML page that shows links to the frontend url (if FRONTEND_URL is set) and admin panel
 - **Environment Variables**:
   - `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` for initial admin setup
-  - `FRONTEND_URL` for frontend redirect (optional)
+  - `FRONTEND_URL` for frontend application link (optional)
 
 ### Frontend Architecture
 
@@ -266,6 +266,7 @@ wrangler secret put VITE_BACKEND_URL
 ├── migrations/             # Database migrations
 ├── routes/                 # Backend route handlers
 │   ├── health.go          # Health check endpoint
+│   ├── index.go           # Index route with DaisyUI landing page
 │   └── routes.go          # Route registration
 ├── pb_data/               # PocketBase data (gitignored)
 ├── frontend/              # React Router v7 with Cloudflare Workers
@@ -342,4 +343,3 @@ Then edit the generated file in the `migrations/` directory. For collection migr
 2. **Authentication**: All API requests should include PocketBase auth tokens
 3. **HTTPS**: Use HTTPS in production for both frontend and backend
 4. **Environment Variables**: Never commit sensitive values to version control
-
