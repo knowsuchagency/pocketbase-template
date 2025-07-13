@@ -154,7 +154,6 @@ The frontend tests are configured to:
 
 - **PocketBase Application**: Single binary with embedded SQLite database
 - **Migration System**: Automatic migration support with `migratecmd` plugin
-- **CORS**: PocketBase handles CORS automatically (allows all origins by default since it's stateless)
 - **No Frontend Serving**: Backend serves only API endpoints, not static files
 - **Index Route**: Root path (`/`) serves a DaisyUI-styled HTML page that shows links to the frontend url (if FRONTEND_URL is set) and admin panel
 - **Environment Variables**:
@@ -337,9 +336,3 @@ Then edit the generated file in the `migrations/` directory. For collection migr
 ### Frontend
 - `VITE_BACKEND_URL` - Backend API URL (defaults to `http://localhost:8090`)
 
-## Security Considerations
-
-1. **CORS**: PocketBase allows all origins by default (stateless API)
-2. **Authentication**: All API requests should include PocketBase auth tokens
-3. **HTTPS**: Use HTTPS in production for both frontend and backend
-4. **Environment Variables**: Never commit sensitive values to version control
