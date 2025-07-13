@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { pb } from '~/lib/pocketbase';
+import pb from '~/lib/pocketbase';
 import type { RecordModel, RecordAuthResponse } from 'pocketbase';
 
 interface User extends RecordModel {
