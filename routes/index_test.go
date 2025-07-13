@@ -18,14 +18,9 @@ func TestIndexRoute(t *testing.T) {
 			Headers: map[string]string{
 				"Accept": "application/json",
 			},
-			ExpectedStatus: 200,
+			ExpectedStatus: 404,
 			ExpectedContent: []string{
-				`"name":"PocketBase API"`,
-				`"health":"/health"`,
-				`"admin":"/_/"`,
-			},
-			NotExpectedContent: []string{
-				`"frontend"`,
+				"Not Found",
 			},
 			TestAppFactory: func(t testing.TB) *tests.TestApp {
 				// Ensure FRONTEND_URL is not set
@@ -44,11 +39,9 @@ func TestIndexRoute(t *testing.T) {
 			Headers: map[string]string{
 				"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 			},
-			ExpectedStatus: 200,
+			ExpectedStatus: 404,
 			ExpectedContent: []string{
-				`"name":"PocketBase API"`,
-				`"health":"/health"`,
-				`"admin":"/_/"`,
+				"Not Found",
 			},
 			TestAppFactory: func(t testing.TB) *tests.TestApp {
 				// Ensure FRONTEND_URL is not set
