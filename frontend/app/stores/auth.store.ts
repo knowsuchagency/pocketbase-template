@@ -1,82 +1,80 @@
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
-import pb from '~/lib/pocketbase'
-import type { RecordModel } from 'pocketbase'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+import pb from '~/lib/pocketbase';
+import type { RecordModel, RecordAuthResponse } from 'pocketbase';
+
+interface User extends RecordModel {
+  email: string;
+  name?: string;
+  avatar?: string;
+}
 
 interface AuthState {
-  user: RecordModel | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  error: string | null
-  
-  // Actions
-  login: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void>
-  checkAuth: () => void
-  clearError: () => void
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<RecordAuthResponse<User>>;
+  logout: () => void;
+  checkAuth: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   devtools(
     persist(
       (set) => ({
-        user: pb.authStore.record,
-        isAuthenticated: pb.authStore.isValid,
+        user: null,
+        isAuthenticated: false,
         isLoading: false,
-        error: null,
 
         login: async (email: string, password: string) => {
-          set({ isLoading: true, error: null })
+          set({ isLoading: true });
           try {
-            const authData = await pb.collection('users').authWithPassword(email, password)
+            const authData = await pb.collection('users').authWithPassword<User>(email, password);
             set({
               user: authData.record,
               isAuthenticated: true,
               isLoading: false,
-              error: null
-            })
+            });
+            return authData;
           } catch (error) {
-            set({
-              isLoading: false,
-              error: error instanceof Error ? error.message : 'Login failed'
-            })
-            throw error
+            set({ isLoading: false });
+            throw error;
           }
         },
 
-        logout: async () => {
-          pb.authStore.clear()
+        logout: () => {
+          pb.authStore.clear();
           set({
             user: null,
             isAuthenticated: false,
-            error: null
-          })
+          });
         },
 
         checkAuth: () => {
+          const isValid = pb.authStore.isValid;
+          const model = pb.authStore.model as User | null;
+          
           set({
-            user: pb.authStore.record,
-            isAuthenticated: pb.authStore.isValid
-          })
+            user: isValid ? model : null,
+            isAuthenticated: isValid,
+          });
         },
-
-        clearError: () => {
-          set({ error: null })
-        }
       }),
       {
         name: 'auth-storage',
         partialize: (state) => ({ 
-          // We don't persist loading or error states
-          user: state.user,
-          isAuthenticated: state.isAuthenticated
-        })
+          user: state.user, 
+          isAuthenticated: state.isAuthenticated 
+        }),
       }
-    )
+    ),
+    {
+      name: 'AuthStore',
+    }
   )
-)
+);
 
-// Listen to PocketBase auth changes
+// Sync PocketBase auth state with Zustand
 pb.authStore.onChange(() => {
-  useAuthStore.getState().checkAuth()
-})
+  useAuthStore.getState().checkAuth();
+});
