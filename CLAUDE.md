@@ -22,10 +22,11 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 - 🏥 Health check endpoint at `/health`
 - 🗄️ State Management with Zustand
 - 🧪 End-to-end testing with Playwright
+- 🎨 Tailwind CSS v4 with shadcn/ui components
 
 ## Prerequisites
 
-- Go 1.24 or higher
+- Go 1.23 or higher
 - [Bun](https://bun.sh/) for frontend development
 - Docker and Docker Compose (for containerized backend deployment)
 - [just](https://github.com/casey/just) task runner (optional but recommended)
@@ -70,8 +71,10 @@ cd frontend
 bun install
 ```
 
-3. Create a `.env` file for the frontend
+3. Create a `.env` file for the frontend (optional - defaults to localhost:8090)
 ```bash
+cp .env.example .env
+# or manually create:
 echo "VITE_BACKEND_URL=http://localhost:8090" > .env
 ```
 
@@ -157,12 +160,13 @@ The frontend tests are configured to:
 
 - **Framework**: React Router v7 with SSR enabled for Cloudflare Workers
 - **Backend Framework**: Hono for API routing in Workers environment
-- **Styling**: Tailwind CSS v4 with shadcn/ui components
+- **Styling**: Tailwind CSS v4 with shadcn/ui components (New York style)
 - **State Management**: Zustand for global state and auth persistence
 - **Testing**: Playwright for end-to-end testing
 - **Build Output**: Cloudflare Workers bundle
 - **Deployment**: Cloudflare Workers for global edge computing
 - **Configuration**: Environment variables via `VITE_BACKEND_URL`
+- **TypeScript**: Full TypeScript support with strict type checking
 
 #### Key Frontend Components
 
@@ -171,9 +175,10 @@ The frontend tests are configured to:
   - Handles React Router SSR with `createRequestHandler`
   - Provides request context to React components
 
-- **Routes Configuration** (`frontend/app/routes.ts`):
-  - Explicit route definitions for React Router
-  - File-based routing with lazy loading support
+- **Routes Configuration** (`frontend/routes.ts`):
+  - Explicit route definitions for React Router v7
+  - Lazy loading for route components
+  - Configured in `react-router.config.ts` with SSR enabled
 
 - **Auth Store** (`frontend/app/stores/auth.store.ts`): 
   - Manages user authentication state
@@ -189,21 +194,22 @@ The frontend tests are configured to:
 - **PocketBase Client** (`frontend/app/lib/pocketbase.ts`):
   - Configured PocketBase SDK instance
   - Auto-cancellation disabled for better control
+  - Backend URL from environment variable
 
-- **Protected Routes**: Components wrapped with authentication checks
-- **Login Form**: Full authentication flow with error handling
-- **Notifications**: Toast-style notifications with auto-dismiss
+- **Protected Routes** (`frontend/app/components/ProtectedRoute.tsx`): Wrapper for auth-required pages
+- **Login Form** (`frontend/app/components/LoginForm.tsx`): Full authentication flow with error handling
+- **Notifications** (`frontend/app/components/NotificationList.tsx`): Toast-style notifications with auto-dismiss
 
 #### Component Import Paths
 
-When importing shadcn/ui components, use the correct nested path:
+When importing shadcn/ui components, use these standard paths:
 ```typescript
-// Correct
+// UI Components
 import { Button } from '~/components/ui/button';
 import { Card } from '~/components/ui/card';
 
-// Incorrect - will fail
-import { Button } from '~/components/components/ui/button';
+// Utilities
+import { cn } from '~/lib/utils';
 ```
 
 ## Deployment
@@ -237,7 +243,7 @@ bun run deploy
 
 This will deploy the application to Cloudflare Workers using wrangler.
 
-Configuration is managed via `wrangler.json`:
+Configuration is managed via `wrangler.jsonc`:
 - Set your Cloudflare account ID
 - Configure environment variables and secrets
 - Adjust worker settings as needed
@@ -270,10 +276,11 @@ wrangler secret put VITE_BACKEND_URL
 │   │   └── app.ts       # Hono app configuration
 │   ├── tests/            # Playwright tests
 │   ├── build/            # Build output (gitignored)
-│   ├── app.ts            # App routes configuration
+│   ├── .env.example      # Example environment variables
+│   ├── react-router.config.ts # React Router configuration
 │   ├── routes.ts         # React Router routes definition
+│   ├── components.json   # shadcn/ui configuration
 │   └── package.json      # Frontend dependencies
-├── frontend-daisyui/      # Old DaisyUI frontend (archived)
 ├── Dockerfile             # Backend Docker build
 ├── docker-compose.yml     # Container orchestration
 ├── justfile              # Task automation
