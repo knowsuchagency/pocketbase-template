@@ -23,5 +23,6 @@ services:
     environment:
       - SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
       - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+      - FRONTEND_URL=${FRONTEND_URL}
     depends_on:
       - migrate
