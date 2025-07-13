@@ -1,8 +1,8 @@
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/components/ui/card";
-import { Badge } from "~/components/components/ui/badge";
-import { Button } from "~/components/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
 
 export function Welcome({ message }: { message: string }) {
   return (
