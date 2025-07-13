@@ -113,6 +113,7 @@ just show-collections        # Show all collections in human/LLM readable format
 just reset                   # Reset the database (WARNING: deletes all data)
 just test-backend            # Run Go backend tests
 just update-deps             # Update all Go and frontend dependencies to latest versions
+just deploy                  # Deploy frontend to Cloudflare Workers
 ```
 
 ### Frontend Commands
@@ -155,8 +156,10 @@ The frontend tests are configured to:
 - **Migration System**: Automatic migration support with `migratecmd` plugin
 - **CORS**: PocketBase handles CORS automatically (allows all origins by default since it's stateless)
 - **No Frontend Serving**: Backend serves only API endpoints, not static files
+- **Index Route**: Root path (`/`) redirects to frontend when `FRONTEND_URL` is set, returns 404 otherwise
 - **Environment Variables**:
   - `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` for initial admin setup
+  - `FRONTEND_URL` for frontend redirect (optional)
 
 ### Frontend Architecture
 
@@ -328,6 +331,7 @@ Then edit the generated file in the `migrations/` directory. For collection migr
 ### Backend
 - `SUPERUSER_EMAIL` - Email for the initial admin user
 - `SUPERUSER_PASSWORD` - Password for the initial admin user
+- `FRONTEND_URL` - Frontend application URL (optional, used for root path redirects)
 
 ### Frontend
 - `VITE_BACKEND_URL` - Backend API URL (defaults to `http://localhost:8090`)
