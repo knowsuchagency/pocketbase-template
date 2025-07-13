@@ -12,15 +12,19 @@ import (
 func TestIndexRoute(t *testing.T) {
 	scenarios := []tests.ApiScenario{
 		{
-			Name:           "index route without FRONTEND_URL - API client",
+			Name:           "index route without FRONTEND_URL",
 			Method:         http.MethodGet,
 			URL:            "/",
-			Headers: map[string]string{
-				"Accept": "application/json",
-			},
-			ExpectedStatus: 404,
+			ExpectedStatus: 200,
 			ExpectedContent: []string{
-				"Not Found",
+				"<!DOCTYPE html>",
+				"PocketBase Template",
+				"Admin Panel",
+				"/_/",
+				// Should not contain Frontend Application link
+			},
+			NotExpectedContent: []string{
+				"Frontend Application",
 			},
 			TestAppFactory: func(t testing.TB) *tests.TestApp {
 				// Ensure FRONTEND_URL is not set
@@ -33,34 +37,18 @@ func TestIndexRoute(t *testing.T) {
 			},
 		},
 		{
-			Name:           "index route without FRONTEND_URL - browser",
+			Name:           "index route with valid FRONTEND_URL",
 			Method:         http.MethodGet,
 			URL:            "/",
-			Headers: map[string]string{
-				"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-			},
-			ExpectedStatus: 404,
+			ExpectedStatus: 200,
 			ExpectedContent: []string{
-				"Not Found",
+				"<!DOCTYPE html>",
+				"PocketBase Template",
+				"Admin Panel",
+				"/_/",
+				"Frontend Application",
+				"https://example.com",
 			},
-			TestAppFactory: func(t testing.TB) *tests.TestApp {
-				// Ensure FRONTEND_URL is not set
-				os.Unsetenv("FRONTEND_URL")
-				app, _ := tests.NewTestApp()
-				return app
-			},
-			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-				RegisterIndex(e)
-			},
-		},
-		{
-			Name:           "index route with FRONTEND_URL - API client redirect",
-			Method:         http.MethodGet,
-			URL:            "/",
-			Headers: map[string]string{
-				"Accept": "application/json",
-			},
-			ExpectedStatus: 302,
 			TestAppFactory: func(t testing.TB) *tests.TestApp {
 				// Set FRONTEND_URL
 				os.Setenv("FRONTEND_URL", "https://example.com")
@@ -71,26 +59,28 @@ func TestIndexRoute(t *testing.T) {
 				RegisterIndex(e)
 			},
 			AfterTestFunc: func(t testing.TB, app *tests.TestApp, res *http.Response) {
-				// Check redirect location
-				location := res.Header.Get("Location")
-				if location != "https://example.com" {
-					t.Errorf("Expected Location header to be 'https://example.com', got '%s'", location)
-				}
 				// Clean up
 				os.Unsetenv("FRONTEND_URL")
 			},
 		},
 		{
-			Name:           "index route with FRONTEND_URL - browser redirect",
+			Name:           "index route with invalid FRONTEND_URL",
 			Method:         http.MethodGet,
 			URL:            "/",
-			Headers: map[string]string{
-				"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+			ExpectedStatus: 200,
+			ExpectedContent: []string{
+				"<!DOCTYPE html>",
+				"PocketBase Template",
+				"Admin Panel",
+				"/_/",
 			},
-			ExpectedStatus: 302,
+			NotExpectedContent: []string{
+				"Frontend Application",
+				"://invalid-url",
+			},
 			TestAppFactory: func(t testing.TB) *tests.TestApp {
-				// Set FRONTEND_URL
-				os.Setenv("FRONTEND_URL", "https://example.com")
+				// Set invalid FRONTEND_URL
+				os.Setenv("FRONTEND_URL", "://invalid-url")
 				app, _ := tests.NewTestApp()
 				return app
 			},
@@ -98,40 +88,61 @@ func TestIndexRoute(t *testing.T) {
 				RegisterIndex(e)
 			},
 			AfterTestFunc: func(t testing.TB, app *tests.TestApp, res *http.Response) {
-				// Check redirect location
-				location := res.Header.Get("Location")
-				if location != "https://example.com" {
-					t.Errorf("Expected Location header to be 'https://example.com', got '%s'", location)
-				}
 				// Clean up
 				os.Unsetenv("FRONTEND_URL")
 			},
 		},
 		{
-			Name:           "index route with FRONTEND_URL - curl user agent redirect",
+			Name:           "index route contains dark mode script",
 			Method:         http.MethodGet,
 			URL:            "/",
-			Headers: map[string]string{
-				"User-Agent": "curl/7.64.1",
+			ExpectedStatus: 200,
+			ExpectedContent: []string{
+				"prefers-color-scheme: dark",
+				"data-theme",
+				"matchMedia",
 			},
-			ExpectedStatus: 302,
 			TestAppFactory: func(t testing.TB) *tests.TestApp {
-				// Set FRONTEND_URL
-				os.Setenv("FRONTEND_URL", "https://example.com")
 				app, _ := tests.NewTestApp()
 				return app
 			},
 			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
 				RegisterIndex(e)
 			},
-			AfterTestFunc: func(t testing.TB, app *tests.TestApp, res *http.Response) {
-				// Check redirect location
-				location := res.Header.Get("Location")
-				if location != "https://example.com" {
-					t.Errorf("Expected Location header to be 'https://example.com', got '%s'", location)
-				}
-				// Clean up
-				os.Unsetenv("FRONTEND_URL")
+		},
+		{
+			Name:           "index route with DaisyUI CDN",
+			Method:         http.MethodGet,
+			URL:            "/",
+			ExpectedStatus: 200,
+			ExpectedContent: []string{
+				"https://cdn.jsdelivr.net/npm/daisyui",
+				"https://cdn.tailwindcss.com",
+			},
+			TestAppFactory: func(t testing.TB) *tests.TestApp {
+				app, _ := tests.NewTestApp()
+				return app
+			},
+			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
+				RegisterIndex(e)
+			},
+		},
+		{
+			Name:           "index route HTML structure",
+			Method:         http.MethodGet,
+			URL:            "/",
+			ExpectedStatus: 200,
+			ExpectedContent: []string{
+				"<!DOCTYPE html>",
+				"<html lang=\"en\">",
+				"viewport",
+			},
+			TestAppFactory: func(t testing.TB) *tests.TestApp {
+				app, _ := tests.NewTestApp()
+				return app
+			},
+			BeforeTestFunc: func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
+				RegisterIndex(e)
 			},
 		},
 	}
