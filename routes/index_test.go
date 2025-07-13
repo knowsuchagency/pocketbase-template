@@ -61,19 +61,13 @@ func TestIndexRoute(t *testing.T) {
 			},
 		},
 		{
-			Name:           "index route with FRONTEND_URL - API client",
+			Name:           "index route with FRONTEND_URL - API client redirect",
 			Method:         http.MethodGet,
 			URL:            "/",
 			Headers: map[string]string{
 				"Accept": "application/json",
 			},
-			ExpectedStatus: 200,
-			ExpectedContent: []string{
-				`"name":"PocketBase API"`,
-				`"health":"/health"`,
-				`"admin":"/_/"`,
-				`"frontend":"https://example.com"`,
-			},
+			ExpectedStatus: 302,
 			TestAppFactory: func(t testing.TB) *tests.TestApp {
 				// Set FRONTEND_URL
 				os.Setenv("FRONTEND_URL", "https://example.com")
@@ -84,6 +78,11 @@ func TestIndexRoute(t *testing.T) {
 				RegisterIndex(e)
 			},
 			AfterTestFunc: func(t testing.TB, app *tests.TestApp, res *http.Response) {
+				// Check redirect location
+				location := res.Header.Get("Location")
+				if location != "https://example.com" {
+					t.Errorf("Expected Location header to be 'https://example.com', got '%s'", location)
+				}
 				// Clean up
 				os.Unsetenv("FRONTEND_URL")
 			},
@@ -116,17 +115,13 @@ func TestIndexRoute(t *testing.T) {
 			},
 		},
 		{
-			Name:           "index route with FRONTEND_URL - curl user agent",
+			Name:           "index route with FRONTEND_URL - curl user agent redirect",
 			Method:         http.MethodGet,
 			URL:            "/",
 			Headers: map[string]string{
 				"User-Agent": "curl/7.64.1",
 			},
-			ExpectedStatus: 200,
-			ExpectedContent: []string{
-				`"name":"PocketBase API"`,
-				`"frontend":"https://example.com"`,
-			},
+			ExpectedStatus: 302,
 			TestAppFactory: func(t testing.TB) *tests.TestApp {
 				// Set FRONTEND_URL
 				os.Setenv("FRONTEND_URL", "https://example.com")
@@ -137,6 +132,11 @@ func TestIndexRoute(t *testing.T) {
 				RegisterIndex(e)
 			},
 			AfterTestFunc: func(t testing.TB, app *tests.TestApp, res *http.Response) {
+				// Check redirect location
+				location := res.Header.Get("Location")
+				if location != "https://example.com" {
+					t.Errorf("Expected Location header to be 'https://example.com', got '%s'", location)
+				}
 				// Clean up
 				os.Unsetenv("FRONTEND_URL")
 			},

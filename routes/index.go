@@ -2,7 +2,6 @@ package routes
 
 import (
 	"os"
-	"strings"
 
 	"github.com/pocketbase/pocketbase/core"
 )
@@ -21,21 +20,7 @@ func RegisterIndex(se *core.ServeEvent) {
 			})
 		}
 		
-		// Check if the request is from a browser by looking at the Accept header
-		acceptHeader := re.Request.Header.Get("Accept")
-		isBrowser := strings.Contains(acceptHeader, "text/html")
-		
-		// If it's a browser request, redirect to the frontend
-		if isBrowser {
-			return re.Redirect(302, frontendURL)
-		}
-		
-		// For API clients, return JSON
-		return re.JSON(200, map[string]interface{}{
-			"name": "PocketBase API",
-			"health": "/health",
-			"admin": "/_/",
-			"frontend": frontendURL,
-		})
+		// Always redirect to frontend URL when it's set
+		return re.Redirect(302, frontendURL)
 	})
 }
