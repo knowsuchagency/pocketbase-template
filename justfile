@@ -41,7 +41,7 @@ dev-pb:
 
 # Run backend in dev mode (frontend should be run separately)
 dev:
-    npx concurrently "cd frontend && bun run dev" "go run main.go serve --dev"
+    npx concurrently --names "frontend,backend" --prefix-colors "cyan,magenta" "cd frontend && bun run dev" "go run main.go serve --dev"
 
 # Build backend only (frontend built separately for Cloudflare deployment)
 build:
@@ -71,10 +71,11 @@ migrate:
 migratedown:
     go run . migrate down
 
-# Update all Go dependencies to their latest versions
+# Update all dependencies to their latest versions
 update-deps:
     go get -u ./...
     go mod tidy
+    cd frontend && bun update --latest
 
 # Update PocketBase to the latest version
 update-pocketbase:
