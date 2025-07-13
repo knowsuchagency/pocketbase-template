@@ -104,6 +104,7 @@ docker-compose up -d
 
 ```bash
 just dev-pb                  # Start PocketBase development server with --dev flag
+just dev                     # Run both frontend and backend concurrently with named output
 just build                   # Build the backend binary
 just makemigration "name"    # Create new migration file
 just migrate                 # Run pending migrations
@@ -111,6 +112,7 @@ just migratedown             # Rollback last migration
 just show-collections        # Show all collections in human/LLM readable format
 just reset                   # Reset the database (WARNING: deletes all data)
 just test-backend            # Run Go backend tests
+just update-deps             # Update all Go and frontend dependencies to latest versions
 ```
 
 ### Frontend Commands
@@ -141,7 +143,7 @@ just test-frontend           # Run Playwright frontend tests
 
 The frontend tests are configured to:
 - Automatically start both PocketBase backend and frontend dev server
-- Run tests against all major browsers (Chromium, Firefox, WebKit)
+- Run tests against Chromium by default (Firefox and WebKit are commented out)
 - Use environment variables from `.env` for test credentials
 - Generate HTML reports for test results
 
@@ -320,52 +322,6 @@ just makemigration "add_custom_collection"
 ```
 
 Then edit the generated file in the `migrations/` directory. For collection migrations, refer to the [PocketBase documentation](https://pocketbase.io/docs/go-collections/).
-
-Example migration for creating a test user:
-```go
-package migrations
-
-import (
-    "os"
-    "github.com/pocketbase/pocketbase/core"
-    m "github.com/pocketbase/pocketbase/migrations"
-)
-
-func init() {
-    m.Register(func(app core.App) error {
-        // Only create test user in development mode
-        if os.Getenv("GO_ENV") == "production" {
-            return nil
-        }
-
-        collection, err := app.FindCollectionByNameOrId("users")
-        if err != nil {
-            return err
-        }
-
-        // Check if test user already exists
-        record, _ := app.FindAuthRecordByEmail("users", os.Getenv("SUPERUSER_EMAIL"))
-        if record != nil {
-            return nil // User already exists
-        }
-
-        // Create test user with same credentials as superuser
-        record = core.NewRecord(collection)
-        record.Set("email", os.Getenv("SUPERUSER_EMAIL"))
-        record.Set("emailVisibility", true)
-        record.SetPassword(os.Getenv("SUPERUSER_PASSWORD"))
-
-        return app.Save(record)
-    }, func(app core.App) error {
-        // Rollback: Remove test user
-        record, err := app.FindAuthRecordByEmail("users", os.Getenv("SUPERUSER_EMAIL"))
-        if err != nil {
-            return nil
-        }
-        return app.Delete(record)
-    })
-}
-```
 
 ## Environment Variables
 
