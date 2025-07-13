@@ -62,6 +62,6 @@ test.describe('Authentication', () => {
     await expect(page.getByText('Login').first()).toBeVisible();
     
     // Check for logout notification
-    await expect(page.getByRole('heading', { name: 'Logged out' })).toBeVisible();
+    await expect(page.locator('[data-slot="alert-title"]').filter({ hasText: 'Logged out' })).toBeVisible();
   });
 });

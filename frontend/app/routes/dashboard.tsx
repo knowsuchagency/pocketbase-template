@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useAuthStore } from '~/stores/auth.store';
+import { useAppStore } from '~/stores/app.store';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { useNavigate } from 'react-router';
@@ -17,6 +18,7 @@ export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
+  const addNotification = useAppStore((state) => state.addNotification);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -26,6 +28,11 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     logout();
+    addNotification({
+      type: 'success',
+      title: 'Logged out',
+      message: 'You have been successfully logged out.',
+    });
     navigate('/');
   };
 
