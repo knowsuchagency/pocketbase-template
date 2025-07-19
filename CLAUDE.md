@@ -26,8 +26,6 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 
 ## Prerequisites
 
-- Go 1.24 or higher
-- [Bun](https://bun.sh/) for frontend development
 - Docker and Docker Compose (for containerized backend deployment)
 - [mise](https://mise.jdx.dev/) task runner and tool version manager
 
