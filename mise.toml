@@ -1,0 +1,128 @@
+# Tool version management
+[tools]
+go = "1.24.4"
+bun = "latest"
+node = "latest"
+
+# Environment configuration
+[env]
+_.file = ".env"
+
+# Task definitions
+[tasks.install-deps]
+description = "Install backend dependencies"
+run = "go mod tidy"
+
+[tasks.init]
+description = "Initialize the project"
+depends = ["install-deps"]
+run = """
+#!/bin/bash
+if [ ! -f .env ]; then
+    cp .env.example .env
+    echo "Setting up superuser credentials..."
+    echo -n "Enter superuser email: "
+    read -r email
+    echo -n "Enter superuser password: "
+    read -rs password
+    echo
+    # Use sed to replace the values in .env
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        sed -i '' "s/SUPERUSER_EMAIL=.*/SUPERUSER_EMAIL=$email/" .env
+        sed -i '' "s/SUPERUSER_PASSWORD=.*/SUPERUSER_PASSWORD=$password/" .env
+    else
+        # Linux
+        sed -i "s/SUPERUSER_EMAIL=.*/SUPERUSER_EMAIL=$email/" .env
+        sed -i "s/SUPERUSER_PASSWORD=.*/SUPERUSER_PASSWORD=$password/" .env
+    fi
+    echo "✅ .env file created with your credentials"
+else
+    echo "✅ .env file already exists"
+fi
+"""
+
+[tasks.dev-frontend]
+description = "Run frontend dev server (run from frontend directory)"
+run = "cd frontend && bun run dev"
+
+[tasks.dev-pb]
+description = "Start the PocketBase development server"
+run = "go run main.go serve --dev"
+
+[tasks.dev]
+description = "Run backend in dev mode (frontend should be run separately)"
+run = 'npx concurrently --names "frontend,backend" --prefix-colors "cyan,magenta" "cd frontend && bun run dev" "go run main.go serve --dev"'
+
+[tasks.build]
+description = "Build backend only (frontend built separately for Cloudflare deployment)"
+run = """
+go build -o pocketbase main.go
+cd frontend && bun run build
+"""
+
+[tasks.test-backend]
+description = "Run backend tests"
+run = "go test -v ./..."
+
+[tasks.test-frontend]
+description = "Run frontend tests (run from frontend directory)"
+run = "cd frontend && bun run test"
+
+[tasks.test]
+description = "Run all tests"
+depends = ["test-backend", "test-frontend"]
+
+[tasks.makemigration]
+description = "Create a new database migration with the specified name"
+run = 'echo "y" | go run . migrate create "{{arg(name)}}"'
+
+[tasks.migrate]
+description = "Run all pending database migrations"
+run = "go run . migrate up"
+
+[tasks.migratedown]
+description = "Rollback the last database migration"
+run = "go run . migrate down"
+
+[tasks.update-deps]
+description = "Update all dependencies to their latest versions"
+run = """
+go get -u ./...
+go mod tidy
+cd frontend && bun update --latest
+"""
+
+[tasks.update-pocketbase]
+description = "Update PocketBase to the latest version"
+run = """
+go get github.com/pocketbase/pocketbase@latest
+go mod tidy
+"""
+
+[tasks.check-updates]
+description = "Check for available updates to all dependencies"
+run = "go list -m -u all"
+
+[tasks.show-collections]
+description = "Show collections in a human and LLM readable format (use --show-hidden to include hidden collections)"
+run = '''go run cmd/show-collections.go show-collections {{option(FLAGS)}} 2>&1 | grep -v -E '^\[[0-9]+(\.[0-9]+)?ms\]' '''
+
+[tasks.reset]
+description = "Reset the database"
+run = """
+#!/bin/bash
+echo "⚠️  WARNING: This will permanently delete all database data!"
+echo -n "Are you sure you want to reset the database? (y/N): "
+read -r confirm
+if [[ "$confirm" =~ ^[Yy]$ ]]; then
+    rm -rf ./pb_data/*
+    echo "✅ Database reset complete."
+else
+    echo "Reset cancelled."
+fi
+"""
+
+[tasks.deploy]
+description = "Deploy to Cloudflare"
+run = "cd frontend && bun run deploy"

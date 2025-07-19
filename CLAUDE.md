@@ -17,7 +17,7 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 - ⚛️ React Router v7 with SSR and Hono for Cloudflare Workers deployment
 - 🐳 Docker configuration for backend deployment
 - 📦 Database migration system with automatic migrations in development
-- 🛠️ Task automation with `just` for development workflow
+- 🛠️ Task automation with `mise` for development workflow
 - 🔐 Environment-based superuser initialization
 - 🏥 Health check endpoint at `/health`
 - 🗄️ State Management with Zustand
@@ -29,7 +29,7 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 - Go 1.24 or higher
 - [Bun](https://bun.sh/) for frontend development
 - Docker and Docker Compose (for containerized backend deployment)
-- [just](https://github.com/casey/just) task runner (optional but recommended)
+- [mise](https://mise.jdx.dev/) task runner and tool version manager
 
 ## Quick Start
 
@@ -43,7 +43,7 @@ cd pocketbase-template
 
 2. Initialize the backend
 ```bash
-just init
+mise run init
 ```
 
 This will:
@@ -54,7 +54,7 @@ This will:
 
 3. Run the backend development server
 ```bash
-just dev-pb
+mise run dev-pb
 ```
 
 The PocketBase server will start at `http://localhost:8090` (admin UI at `http://localhost:8090/_/`)
@@ -103,17 +103,17 @@ docker-compose up -d
 ### Backend Commands
 
 ```bash
-just dev-pb                  # Start PocketBase development server with --dev flag
-just dev                     # Run both frontend and backend concurrently with named output
-just build                   # Build the backend binary
-just makemigration "name"    # Create new migration file
-just migrate                 # Run pending migrations
-just migratedown             # Rollback last migration
-just show-collections        # Show all collections in human/LLM readable format
-just reset                   # Reset the database (WARNING: deletes all data)
-just test-backend            # Run Go backend tests
-just update-deps             # Update all Go and frontend dependencies to latest versions
-just deploy                  # Deploy frontend to Cloudflare Workers
+mise run dev-pb                  # Start PocketBase development server with --dev flag
+mise run dev                     # Run both frontend and backend concurrently with named output
+mise run build                   # Build the backend binary
+mise run makemigration "name"    # Create new migration file
+mise run migrate                 # Run pending migrations
+mise run migratedown             # Rollback last migration
+mise run show-collections        # Show all collections in human/LLM readable format
+mise run reset                   # Reset the database (WARNING: deletes all data)
+mise run test-backend            # Run Go backend tests
+mise run update-deps             # Update all Go and frontend dependencies to latest versions
+mise run deploy                  # Deploy frontend to Cloudflare Workers
 ```
 
 ### Frontend Commands
@@ -135,9 +135,9 @@ bun run deploy               # Deploy to Cloudflare Workers
 ### Testing Commands
 
 ```bash
-just test                    # Run all tests (backend and frontend)
-just test-backend            # Run Go backend tests
-just test-frontend           # Run Playwright frontend tests
+mise run test                    # Run all tests (backend and frontend)
+mise run test-backend            # Run Go backend tests
+mise run test-frontend           # Run Playwright frontend tests
 ```
 
 #### Playwright Configuration
@@ -293,7 +293,7 @@ wrangler secret put VITE_BACKEND_URL
 │   └── package.json      # Frontend dependencies
 ├── Dockerfile             # Backend Docker build
 ├── docker-compose.yml     # Container orchestration
-├── justfile              # Task automation
+├── mise.toml             # Task automation and tool version management
 └── go.mod                # Go module definition
 ```
 
@@ -326,7 +326,7 @@ export default function Dashboard() {
 
 Generate a new migration:
 ```bash
-just makemigration "add_custom_collection"
+mise run makemigration "add_custom_collection"
 ```
 
 Then edit the generated file in the `migrations/` directory. For collection migrations, refer to the [PocketBase documentation](https://pocketbase.io/docs/go-collections/).
