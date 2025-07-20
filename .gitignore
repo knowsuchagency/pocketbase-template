@@ -34,3 +34,6 @@ go.work.sum
 # Pocketbase
 pb_data/
 pocketbase
+
+# Claude Code local settings
+.claude/settings.local.json
