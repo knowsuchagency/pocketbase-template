@@ -83,7 +83,7 @@ depends = ["test-backend", "test-frontend"]
 
 [tasks.makemigration]
 description = "Create a new database migration with the specified name"
-run = 'echo "y" | go run . migrate create "{{arg(name)}}"'
+run = 'echo "y" | go run . migrate create "{{arg(name="name")}}"'
 
 [tasks.migrate]
 description = "Run all pending database migrations"
@@ -113,8 +113,15 @@ description = "Check for available updates to all dependencies"
 run = "go list -m -u all"
 
 [tasks.show-collections]
-description = "Show collections in a human and LLM readable format (use --show-hidden to include hidden collections)"
-run = '''go run cmd/show-collections.go show-collections {{option(FLAGS)}} 2>&1 | grep -v -E '^\[[0-9]+(\.[0-9]+)?ms\]' '''
+description = "Show collections in a human and LLM readable format (use --hidden to include hidden collections)"
+run = '''
+#!/bin/bash
+FLAGS=""
+if [[ "{{flag(name="hidden")}}" == "true" ]]; then
+    FLAGS="--show-hidden"
+fi
+go run cmd/show-collections.go show-collections $FLAGS 2>&1 | grep -v -E '^\[[0-9]+(\.[0-9]+)?ms\]'
+'''
 
 [tasks.reset]
 description = "Reset the database"
