@@ -327,3 +327,7 @@ Then edit the generated file in the `migrations/` directory. For collection migr
 ### Frontend
 - `VITE_BACKEND_URL` - Backend API URL (defaults to `http://localhost:8090`)
 
+## Development Reminders
+
+- **Migrations**: 
+  - Remember to check https://pocketbase.io/docs/go-collections/ before writing PocketBase migrations -- there are often breaking changes in syntax prior to PocketBase 1.0
