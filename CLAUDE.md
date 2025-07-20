@@ -46,7 +46,6 @@ This will:
 - Install all dependencies (backend and frontend)
 - Create a `.env` file if it doesn't exist
 - Prompt you to set superuser credentials
-- Configure direnv for automatic environment loading
 
 3. Run the development servers
 ```bash
