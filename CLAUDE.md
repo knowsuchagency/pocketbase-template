@@ -31,57 +31,37 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 
 ## Quick Start
 
-### Backend Development
-
 1. Clone the repository
 ```bash
 git clone <repository-url>
 cd pocketbase-template
 ```
 
-2. Initialize the backend
+2. Initialize the project
 ```bash
 mise run init
 ```
 
 This will:
-- Install all dependencies
+- Install all dependencies (backend and frontend)
 - Create a `.env` file if it doesn't exist
 - Prompt you to set superuser credentials
 - Configure direnv for automatic environment loading
 
-3. Run the backend development server
+3. Run the development servers
 ```bash
-mise run dev-pb
+mise run dev
 ```
 
-The PocketBase server will start at `http://localhost:8090` (admin UI at `http://localhost:8090/_/`)
+This starts both:
+- PocketBase backend at `http://localhost:8090` (admin UI at `http://localhost:8090/_/`)
+- React frontend at `http://localhost:5173`
 
-### Frontend Development
-
-1. Navigate to the frontend directory
+To run services individually:
 ```bash
-cd frontend
+mise run dev-pb         # Backend only
+mise run dev-frontend   # Frontend only
 ```
-
-2. Install dependencies
-```bash
-bun install
-```
-
-3. Create a `.env` file for the frontend (optional - defaults to localhost:8090)
-```bash
-cp .env.example .env
-# or manually create:
-echo "VITE_BACKEND_URL=http://localhost:8090" > .env
-```
-
-4. Run the development server
-```bash
-bun run dev
-```
-
-The frontend will start at `http://localhost:5173`
 
 ### Docker Deployment (Backend Only)
 
@@ -98,44 +78,54 @@ docker-compose up -d
 
 ## Essential Commands
 
-### Backend Commands
+All commands are run from the project root:
 
+### Development
 ```bash
-mise run dev-pb                  # Start PocketBase development server with --dev flag
-mise run dev                     # Run both frontend and backend concurrently with named output
-mise run build                   # Build the backend binary
+mise run init                    # Initialize project (install deps, setup env)
+mise run dev                     # Run both frontend and backend concurrently
+mise run dev-pb                  # Start PocketBase development server only
+mise run dev-frontend            # Start frontend development server only
+```
+
+### Building & Deployment
+```bash
+mise run build                   # Build both backend binary and frontend
+mise run build-frontend          # Build frontend for production
+mise run preview-frontend        # Preview frontend production build
+mise run deploy                  # Deploy frontend to Cloudflare Workers
+```
+
+### Database Management
+```bash
 mise run makemigration "name"    # Create new migration file
 mise run migrate                 # Run pending migrations
 mise run migratedown             # Rollback last migration
 mise run show-collections        # Show all collections in human/LLM readable format
 mise run reset                   # Reset the database (WARNING: deletes all data)
-mise run test-backend            # Run Go backend tests
-mise run update-deps             # Update all Go and frontend dependencies to latest versions
-mise run deploy                  # Deploy frontend to Cloudflare Workers
 ```
 
-### Frontend Commands
-
-```bash
-cd frontend
-bun run dev                  # Start development server
-bun run build                # Build for production
-bun run preview              # Preview production build
-bun run typecheck            # Run TypeScript type checking
-bun run test                 # Run Playwright tests
-bun run test:ui              # Run tests with interactive UI
-bun run test:headed          # Run tests in headed browser mode
-bun run test:debug           # Debug tests interactively
-bun run test:report          # Show HTML test report
-bun run deploy               # Deploy to Cloudflare Workers
-```
-
-### Testing Commands
-
+### Testing
 ```bash
 mise run test                    # Run all tests (backend and frontend)
 mise run test-backend            # Run Go backend tests
 mise run test-frontend           # Run Playwright frontend tests
+mise run test-ui                 # Run tests with interactive UI
+mise run test-headed             # Run tests in headed browser mode
+mise run test-debug              # Debug tests interactively
+mise run test-report             # Show HTML test report
+```
+
+### Code Quality
+```bash
+mise run typecheck               # Run TypeScript type checking
+```
+
+### Dependencies
+```bash
+mise run update-deps             # Update all dependencies to latest versions
+mise run update-pocketbase       # Update PocketBase to latest version
+mise run check-updates           # Check for available dependency updates
 ```
 
 #### Playwright Configuration
@@ -238,9 +228,7 @@ docker run -d \
 The frontend is configured for Cloudflare Workers:
 
 ```bash
-cd frontend
-bun run build
-bun run deploy
+mise run deploy
 ```
 
 This will deploy the application to Cloudflare Workers using wrangler.

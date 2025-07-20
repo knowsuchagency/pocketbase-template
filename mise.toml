@@ -9,9 +9,17 @@ node = "latest"
 _.file = ".env"
 
 # Task definitions
-[tasks.install-deps]
+[tasks.install-backend-deps]
 description = "Install backend dependencies"
 run = "go mod tidy"
+
+[tasks.install-frontend-deps]
+description = "Install frontend dependencies"
+run = "cd frontend && bun install"
+
+[tasks.install-deps]
+description = "Install all dependencies (backend and frontend)"
+depends = ["install-backend-deps", "install-frontend-deps"]
 
 [tasks.init]
 description = "Initialize the project"
@@ -43,7 +51,7 @@ fi
 """
 
 [tasks.dev-frontend]
-description = "Run frontend dev server (run from frontend directory)"
+description = "Run frontend dev server"
 run = "cd frontend && bun run dev"
 
 [tasks.dev-pb]
@@ -66,7 +74,7 @@ description = "Run backend tests"
 run = "go test -v ./..."
 
 [tasks.test-frontend]
-description = "Run frontend tests (run from frontend directory)"
+description = "Run frontend tests"
 run = "cd frontend && bun run test"
 
 [tasks.test]
@@ -123,6 +131,34 @@ else
 fi
 """
 
+[tasks.typecheck]
+description = "Run TypeScript type checking"
+run = "cd frontend && bun run typecheck"
+
+[tasks.test-ui]
+description = "Run Playwright tests with interactive UI"
+run = "cd frontend && bun run test:ui"
+
+[tasks.test-headed]
+description = "Run Playwright tests in headed browser mode"
+run = "cd frontend && bun run test:headed"
+
+[tasks.test-debug]
+description = "Debug Playwright tests interactively"
+run = "cd frontend && bun run test:debug"
+
+[tasks.test-report]
+description = "Show HTML test report"
+run = "cd frontend && bun run test:report"
+
+[tasks.build-frontend]
+description = "Build frontend for production"
+run = "cd frontend && bun run build"
+
+[tasks.preview-frontend]
+description = "Preview frontend production build"
+run = "cd frontend && bun run preview"
+
 [tasks.deploy]
-description = "Deploy to Cloudflare"
+description = "Deploy frontend to Cloudflare Workers"
 run = "cd frontend && bun run deploy"
