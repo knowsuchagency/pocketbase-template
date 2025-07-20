@@ -176,7 +176,13 @@ Update relevant navigation components to include links to new features.
 
 ### Step 5: Write and Run Tests
 
-1. **Create Playwright tests** in `frontend/tests/`:
+1. **Create Playwright tests** in `frontend/tests/` that:
+   - Cover all acceptance criteria from requirements.md
+   - Test all user journeys from layout.md
+   - Verify data persistence and proper permissions
+   - Test error states and edge cases
+   - Check responsive design on mobile/desktop viewports
+
    ```typescript
    import { test, expect } from '@playwright/test';
 
@@ -199,19 +205,7 @@ Update relevant navigation components to include links to new features.
 
 Note: The Playwright configuration automatically starts both the PocketBase backend and frontend dev server before running tests, so you don't need to manually start them.
 
-### Step 6: Verify Implementation
-
-The Playwright tests from Step 5 serve as the primary verification method. They should:
-
-1. **Cover all acceptance criteria** from requirements.md
-2. **Test all user journeys** from layout.md
-3. **Verify data persistence** and proper permissions
-4. **Test error states** and edge cases
-5. **Check responsive design** on mobile/desktop viewports
-
-If any tests fail, debug and fix issues before proceeding.
-
-### Step 7: Final Checks
+### Step 6: Final Checks
 
 1. **Run type checking**:
    ```bash
