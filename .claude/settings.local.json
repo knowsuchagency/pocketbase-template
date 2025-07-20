@@ -15,7 +15,8 @@
       "Bash(just test:*)",
       "Bash(docker-compose build:*)",
       "Bash(find:*)",
-      "Bash(just show-collections:*)"
+      "Bash(just show-collections:*)",
+      "Bash(mise:*)"
     ],
     "deny": []
   }
