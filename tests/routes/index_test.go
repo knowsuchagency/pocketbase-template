@@ -118,7 +118,7 @@ func TestIndexRoute(t *testing.T) {
 			ExpectedStatus: 200,
 			ExpectedContent: []string{
 				"https://cdn.jsdelivr.net/npm/daisyui",
-				"https://cdn.tailwindcss.com",
+				"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4",
 			},
 			TestAppFactory: func(t testing.TB) *tests.TestApp {
 				app, _ := tests.NewTestApp()

@@ -29,13 +29,25 @@ export const useAuthStore = create<AuthState>()(
         login: async (email: string, password: string) => {
           set({ isLoading: true });
           try {
-            const authData = await pb.collection('users').authWithPassword<User>(email, password);
-            set({
-              user: authData.record,
-              isAuthenticated: true,
-              isLoading: false,
-            });
-            return authData;
+            // Try to authenticate as a regular user first
+            try {
+              const authData = await pb.collection('users').authWithPassword<User>(email, password);
+              set({
+                user: authData.record,
+                isAuthenticated: true,
+                isLoading: false,
+              });
+              return authData;
+            } catch (userError) {
+              // If user auth fails, try admin auth
+              const authData = await pb.admins.authWithPassword(email, password);
+              set({
+                user: authData.admin as unknown as User,
+                isAuthenticated: true,
+                isLoading: false,
+              });
+              return authData as unknown as RecordAuthResponse<User>;
+            }
           } catch (error) {
             set({ isLoading: false });
             throw error;
