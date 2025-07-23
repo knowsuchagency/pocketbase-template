@@ -24,31 +24,7 @@ depends = ["install-backend-deps", "install-frontend-deps"]
 [tasks.init]
 description = "Initialize the project"
 depends = ["install-deps"]
-run = """
-#!/bin/bash
-if [ ! -f .env ]; then
-    cp .env.example .env
-    echo "Setting up superuser credentials..."
-    echo -n "Enter superuser email: "
-    read -r email
-    echo -n "Enter superuser password: "
-    read -rs password
-    echo
-    # Use sed to replace the values in .env
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
-        sed -i '' "s/SUPERUSER_EMAIL=.*/SUPERUSER_EMAIL=$email/" .env
-        sed -i '' "s/SUPERUSER_PASSWORD=.*/SUPERUSER_PASSWORD=$password/" .env
-    else
-        # Linux
-        sed -i "s/SUPERUSER_EMAIL=.*/SUPERUSER_EMAIL=$email/" .env
-        sed -i "s/SUPERUSER_PASSWORD=.*/SUPERUSER_PASSWORD=$password/" .env
-    fi
-    echo "✅ .env file created with your credentials"
-else
-    echo "✅ .env file already exists"
-fi
-"""
+file = "scripts/init.sh"
 
 [tasks.dev-frontend]
 description = "Run frontend dev server"
