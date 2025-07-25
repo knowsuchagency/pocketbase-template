@@ -13,7 +13,7 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 
 ## Features
 
-- 🚀 PocketBase backend-as-a-service framework (v0.28+)
+- 🚀 PocketBase backend-as-a-service framework (v0.29+)
 - ⚛️ React Router v7 with SSR and Hono for Cloudflare Workers deployment
 - 🐳 Docker configuration for backend deployment
 - 📦 Database migration system with automatic migrations in development
@@ -45,7 +45,7 @@ mise run init
 This will:
 - Install all dependencies (backend and frontend)
 - Create a `.env` file if it doesn't exist
-- Prompt you to set superuser credentials
+- Prompt you to set superuser credentials (with proper interactive input handling)
 
 3. Run the development servers
 ```bash
@@ -58,7 +58,7 @@ This starts both:
 
 To run services individually:
 ```bash
-mise run dev-pb         # Backend only
+mise run dev-backend    # Backend only
 mise run dev-frontend   # Frontend only
 ```
 
@@ -83,7 +83,7 @@ All commands are run from the project root:
 ```bash
 mise run init                    # Initialize project (install deps, setup env)
 mise run dev                     # Run both frontend and backend concurrently
-mise run dev-pb                  # Start PocketBase development server only
+mise run dev-backend             # Start PocketBase development server only
 mise run dev-frontend            # Start frontend development server only
 ```
 
@@ -100,7 +100,7 @@ mise run deploy                  # Deploy frontend to Cloudflare Workers
 mise run makemigration "name"    # Create new migration file
 mise run migrate                 # Run pending migrations
 mise run migratedown             # Rollback last migration
-mise run show-collections        # Show all collections in human/LLM readable format
+mise run show-collections        # Show all collections in human/LLM readable format (use --hidden to include hidden collections)
 mise run reset                   # Reset the database (WARNING: deletes all data)
 ```
 
@@ -134,6 +134,7 @@ The frontend tests are configured to:
 - Run tests against Chromium by default (Firefox and WebKit are commented out)
 - Use environment variables from `.env` for test credentials
 - Generate HTML reports for test results
+- Include improved error handling and diagnostics for auth flows
 
 ## Architecture Details
 
@@ -173,7 +174,7 @@ The frontend tests are configured to:
 
 - **Auth Store** (`frontend/app/stores/auth.store.ts`): 
   - Manages user authentication state
-  - Handles login/logout operations
+  - Handles login/logout operations with admin fallback support
   - Persists auth state across sessions
   - Syncs with PocketBase's authStore
 
@@ -247,6 +248,8 @@ wrangler secret put VITE_BACKEND_URL
 
 ```
 ├── main.go                 # Backend entry point
+├── .claude/               # Claude Code configuration and commands
+│   └── commands/          # Custom slash commands
 ├── migrations/             # Database migrations
 ├── routes/                 # Backend route handlers
 │   ├── health.go          # Health check endpoint

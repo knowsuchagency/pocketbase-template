@@ -67,7 +67,7 @@ fi
 description = "Run frontend dev server"
 run = "cd frontend && bun run dev"
 
-[tasks.dev-pb]
+[tasks.dev-backend]
 description = "Start the PocketBase development server"
 run = "go run main.go serve --dev"
 
