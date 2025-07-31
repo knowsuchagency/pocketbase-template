@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { useAuthStore } from '~/stores/auth.store';
-import { useAppStore } from '~/stores/app.store';
+import { useAuth } from '~/hooks';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { useNavigate } from 'react-router';
@@ -15,26 +14,21 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const logout = useAuthStore((state) => state.logout);
-  const addNotification = useAppStore((state) => state.addNotification);
+  const { user, isAuthenticated, logout, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       navigate('/');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isLoading, navigate]);
 
   const handleLogout = () => {
     logout();
-    addNotification({
-      type: 'success',
-      title: 'Logged out',
-      message: 'You have been successfully logged out.',
-    });
-    navigate('/');
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (!isAuthenticated) {
     return null; // Don't render anything while redirecting

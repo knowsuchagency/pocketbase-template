@@ -1,12 +1,17 @@
 import { Navigate } from 'react-router';
-import { useAuthStore } from '~/stores/auth.store';
+import { useAuth } from '~/hooks';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    // You might want to show a loading spinner here
+    return <div>Loading...</div>;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;

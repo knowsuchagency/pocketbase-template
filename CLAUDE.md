@@ -8,7 +8,7 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 
 - **Backend**: PocketBase API server (Go) - serves both API endpoints and frontend static files
 - **Frontend**: React Router v7 in SPA mode, served directly from PocketBase
-- **Authentication**: PocketBase auth with Zustand state management
+- **Authentication**: PocketBase auth with TanStack Query for server state management
 - **Deployment**: Single Docker container serving both backend and frontend
 
 ## Features
@@ -20,7 +20,7 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 - 🛠️ Task automation with `mise` for development workflow
 - 🔐 Environment-based superuser initialization
 - 🏥 Health check endpoint at `/health`
-- 🗄️ State Management with Zustand
+- 🗄️ State Management with TanStack Query (server state) and Zustand (UI state)
 - 🧪 End-to-end testing with Playwright
 - 🎨 Tailwind CSS v4 with shadcn/ui components
 
@@ -154,7 +154,9 @@ The frontend tests are configured to:
 
 - **Framework**: React Router v7 in SPA mode (SSR disabled)
 - **Styling**: Tailwind CSS v4 with shadcn/ui components (New York style)
-- **State Management**: Zustand for global state and auth persistence
+- **State Management**: 
+  - **Server State**: TanStack Query for API data, auth, and caching
+  - **UI State**: Zustand for local UI state (theme, notifications)
 - **Testing**: Playwright for end-to-end testing
 - **Build Output**: Static files in `frontend/build/client`
 - **Deployment**: Served directly from PocketBase
@@ -168,11 +170,15 @@ The frontend tests are configured to:
   - Lazy loading for route components
   - Configured in `react-router.config.ts` with SSR disabled (SPA mode)
 
-- **Auth Store** (`frontend/app/stores/auth.store.ts`): 
-  - Manages user authentication state
-  - Handles login/logout operations with admin fallback support
-  - Persists auth state across sessions
-  - Syncs with PocketBase's authStore
+- **Auth Service** (`frontend/app/services/auth.service.ts`):
+  - Handles PocketBase authentication operations
+  - Supports both user and admin authentication
+  - Token refresh and validation
+
+- **Auth Hooks** (`frontend/app/hooks/use-auth.ts`):
+  - React Query-based authentication hooks
+  - Provides `useAuth()` for easy auth access
+  - Automatic caching and state synchronization
 
 - **App Store** (`frontend/app/stores/app.store.ts`):
   - Manages global application state

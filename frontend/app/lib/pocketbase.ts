@@ -10,8 +10,5 @@ const pb = new PocketBase(BACKEND_URL);
 // Auto-cancel requests on duplicate calls
 pb.autoCancellation(false);
 
-// Export the backend URL for use in other parts of the app
-export { BACKEND_URL };
-
 // Default export the PocketBase instance
 export default pb;

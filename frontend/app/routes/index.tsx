@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { LoginForm } from '~/components/LoginForm';
-import { useAuthStore } from '~/stores/auth.store';
+import { useAuth } from '~/hooks';
 import type { Route } from './+types/index';
 
 export function meta({}: Route.MetaArgs) {
@@ -13,13 +13,17 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const navigate = useNavigate();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!isLoading && isAuthenticated) {
       navigate('/dashboard');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isLoading, navigate]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (isAuthenticated) {
     return null; // Don't render anything while redirecting

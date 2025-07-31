@@ -7,10 +7,10 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { useEffect } from "react";
-import { useAuthStore } from "~/stores/auth.store";
 import { useThemeStore } from "~/stores/theme.store";
 import { NotificationList } from "~/components/NotificationList";
 import { FloatingThemeToggle } from "~/components/FloatingThemeToggle";
+import { QueryProvider } from "~/providers";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -47,13 +47,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const checkAuth = useAuthStore((state) => state.checkAuth);
-  const { theme, setTheme, effectiveTheme } = useThemeStore();
-
-  useEffect(() => {
-    // Check auth on mount
-    checkAuth();
-  }, [checkAuth]);
+  const { effectiveTheme } = useThemeStore();
 
   useEffect(() => {
     // Initialize theme on mount
@@ -63,11 +57,11 @@ export default function App() {
   }, [effectiveTheme]);
 
   return (
-    <>
+    <QueryProvider>
       <Outlet />
       <NotificationList />
       <FloatingThemeToggle />
-    </>
+    </QueryProvider>
   );
 }
 

@@ -1,12 +1,11 @@
 import { Link, useLocation } from "react-router";
 import { ThemeToggle } from "~/components/ThemeToggle";
-import { useAuthStore } from "~/stores/auth.store";
+import { useAuth } from "~/hooks";
 import { Button } from "~/components/ui/button";
 
 export function Navbar() {
   const location = useLocation();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const logout = useAuthStore((state) => state.logout);
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -24,7 +23,7 @@ export function Navbar() {
                   <Link to="/dashboard">Dashboard</Link>
                 </Button>
               )}
-              <Button variant="ghost" onClick={logout}>
+              <Button variant="ghost" onClick={() => logout()}>
                 Logout
               </Button>
             </>
