@@ -39,14 +39,14 @@ export const useAuthStore = create<AuthState>()(
               });
               return authData;
             } catch (userError) {
-              // If user auth fails, try admin auth
-              const authData = await pb.admins.authWithPassword(email, password);
+              // If user auth fails, try admin auth (superusers collection)
+              const authData = await pb.collection('_superusers').authWithPassword<User>(email, password);
               set({
-                user: authData.admin as unknown as User,
+                user: authData.record,
                 isAuthenticated: true,
                 isLoading: false,
               });
-              return authData as unknown as RecordAuthResponse<User>;
+              return authData;
             }
           } catch (error) {
             set({ isLoading: false });

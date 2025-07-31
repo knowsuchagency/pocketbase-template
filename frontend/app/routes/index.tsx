@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { LoginForm } from '~/components/LoginForm';
 import { useAuthStore } from '~/stores/auth.store';
-import type { Route } from './+types/home';
+import type { Route } from './+types/index';
 
 export function meta({}: Route.MetaArgs) {
   return [
