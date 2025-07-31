@@ -6,16 +6,16 @@ This file also provides guidance to Claude Code (claude.ai/code) when working wi
 
 ## Architecture Overview
 
-- **Backend**: PocketBase API server (Go) - serves only API endpoints, no static files
-- **Frontend**: React Router v7 with SSR for Cloudflare Workers - deployed separately
+- **Backend**: PocketBase API server (Go) - serves both API endpoints and frontend static files
+- **Frontend**: React Router v7 in SPA mode, served directly from PocketBase
 - **Authentication**: PocketBase auth with Zustand state management
-- **Deployment**: Backend on any server/Docker, Frontend on Cloudflare Workers
+- **Deployment**: Single Docker container serving both backend and frontend
 
 ## Features
 
 - 🚀 PocketBase backend-as-a-service framework (v0.29+)
-- ⚛️ React Router v7 with SSR and Hono for Cloudflare Workers deployment
-- 🐳 Docker configuration for backend deployment
+- ⚛️ React Router v7 in SPA mode, served directly from PocketBase
+- 🐳 Docker configuration for full-stack deployment (backend + frontend)
 - 📦 Database migration system with automatic migrations in development
 - 🛠️ Task automation with `mise` for development workflow
 - 🔐 Environment-based superuser initialization
@@ -62,7 +62,7 @@ mise run dev-backend    # Backend only
 mise run dev-frontend   # Frontend only
 ```
 
-### Docker Deployment (Backend Only)
+### Docker Deployment
 
 1. Create a `.env` file:
 ```env
@@ -70,10 +70,13 @@ SUPERUSER_EMAIL=admin@example.com
 SUPERUSER_PASSWORD=your-secure-password
 ```
 
-2. Build and run with Docker Compose
+2. Build frontend and backend, then run with Docker Compose
 ```bash
+mise run build
 docker-compose up -d
 ```
+
+This will serve both the API and frontend from a single container at `http://localhost:8090`.
 
 ## Essential Commands
 
@@ -92,7 +95,7 @@ mise run dev-frontend            # Start frontend development server only
 mise run build                   # Build both backend binary and frontend
 mise run build-frontend          # Build frontend for production
 mise run preview-frontend        # Preview frontend production build
-mise run deploy                  # Deploy frontend to Cloudflare Workers
+mise run deploy                  # Deploy using Docker Compose
 ```
 
 ### Database Management
@@ -142,35 +145,28 @@ The frontend tests are configured to:
 
 - **PocketBase Application**: Single binary with embedded SQLite database
 - **Migration System**: Automatic migration support with `migratecmd` plugin
-- **No Frontend Serving**: Backend serves only API endpoints, not static files
-- **Index Route**: Root path (`/`) serves a DaisyUI-styled HTML page that shows links to the frontend url (if FRONTEND_URL is set) and admin panel
+- **Static File Serving**: Backend serves frontend static files from `frontend/build/client`
+- **SPA Routing**: All routes fall back to index.html for client-side routing
 - **Environment Variables**:
   - `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` for initial admin setup
-  - `FRONTEND_URL` for frontend application link (optional)
 
 ### Frontend Architecture
 
-- **Framework**: React Router v7 with SSR enabled for Cloudflare Workers
-- **Backend Framework**: Hono for API routing in Workers environment
+- **Framework**: React Router v7 in SPA mode (SSR disabled)
 - **Styling**: Tailwind CSS v4 with shadcn/ui components (New York style)
 - **State Management**: Zustand for global state and auth persistence
 - **Testing**: Playwright for end-to-end testing
-- **Build Output**: Cloudflare Workers bundle
-- **Deployment**: Cloudflare Workers for global edge computing
-- **Configuration**: Environment variables via `VITE_BACKEND_URL`
+- **Build Output**: Static files in `frontend/build/client`
+- **Deployment**: Served directly from PocketBase
+- **Configuration**: Automatic backend URL detection (relative in production, localhost:8090 in dev)
 - **TypeScript**: Full TypeScript support with strict type checking
 
 #### Key Frontend Components
 
-- **Hono App** (`frontend/workers/app.ts`):
-  - Configures Hono framework for Cloudflare Workers
-  - Handles React Router SSR with `createRequestHandler`
-  - Provides request context to React components
-
 - **Routes Configuration** (`frontend/routes.ts`):
   - Explicit route definitions for React Router v7
   - Lazy loading for route components
-  - Configured in `react-router.config.ts` with SSR enabled
+  - Configured in `react-router.config.ts` with SSR disabled (SPA mode)
 
 - **Auth Store** (`frontend/app/stores/auth.store.ts`): 
   - Manages user authentication state
@@ -186,7 +182,7 @@ The frontend tests are configured to:
 - **PocketBase Client** (`frontend/app/lib/pocketbase.ts`):
   - Configured PocketBase SDK instance
   - Auto-cancellation disabled for better control
-  - Backend URL from environment variable
+  - Automatic backend URL detection based on environment
 
 - **Protected Routes** (`frontend/app/components/ProtectedRoute.tsx`): Wrapper for auth-required pages
 - **Login Form** (`frontend/app/components/LoginForm.tsx`): Full authentication flow with error handling
@@ -223,26 +219,19 @@ docker run -d \
   pocketbase-app
 ```
 
-### Frontend Deployment
+### Unified Deployment
 
-The frontend is configured for Cloudflare Workers:
+Both frontend and backend are deployed together:
 
 ```bash
-mise run deploy
+# Build everything
+mise run build
+
+# Deploy with Docker
+docker-compose up -d
 ```
 
-This will deploy the application to Cloudflare Workers using wrangler.
-
-Configuration is managed via `wrangler.jsonc`:
-- Set your Cloudflare account ID
-- Configure environment variables and secrets
-- Adjust worker settings as needed
-
-For production, ensure you set the backend URL:
-```bash
-wrangler secret put VITE_BACKEND_URL
-# Enter your production PocketBase URL when prompted
-```
+The frontend is automatically served from PocketBase at the root path (`/`), while API endpoints are available at `/api/*`.
 
 ## Project Structure
 
@@ -253,12 +242,11 @@ wrangler secret put VITE_BACKEND_URL
 ├── migrations/             # Database migrations
 ├── routes/                 # Backend route handlers
 │   ├── health.go          # Health check endpoint
-│   ├── index.go           # Index route with DaisyUI landing page
+│   ├── static.go          # Static file serving for frontend
 │   └── routes.go          # Route registration
 ├── tests/                 # Backend Go tests
 │   └── routes/            # Route handler tests
 │       ├── health_test.go # Health endpoint tests
-│       ├── index_test.go  # Index route tests
 │       └── static_test.go # Static file serving tests
 ├── pb_data/               # PocketBase data (gitignored)
 ├── frontend/              # React Router v7 with Cloudflare Workers
@@ -270,8 +258,6 @@ wrangler secret put VITE_BACKEND_URL
 │   │   ├── lib/          # Utilities and PocketBase client
 │   │   ├── routes/       # Route components
 │   │   └── stores/       # Zustand state stores
-│   ├── workers/          # Cloudflare Workers entry
-│   │   └── app.ts       # Hono app configuration
 │   ├── tests/            # Playwright tests
 │   ├── build/            # Build output (gitignored)
 │   ├── .env.example      # Example environment variables
@@ -279,7 +265,7 @@ wrangler secret put VITE_BACKEND_URL
 │   ├── routes.ts         # React Router routes definition
 │   ├── components.json   # shadcn/ui configuration
 │   └── package.json      # Frontend dependencies
-├── Dockerfile             # Backend Docker build
+├── Dockerfile             # Full-stack Docker build
 ├── docker-compose.yml     # Container orchestration
 ├── mise.toml             # Task automation and tool version management
 └── go.mod                # Go module definition
@@ -324,10 +310,9 @@ Then edit the generated file in the `migrations/` directory. For collection migr
 ### Backend
 - `SUPERUSER_EMAIL` - Email for the initial admin user
 - `SUPERUSER_PASSWORD` - Password for the initial admin user
-- `FRONTEND_URL` - Frontend application URL (optional, used for root path redirects)
 
 ### Frontend
-- `VITE_BACKEND_URL` - Backend API URL (defaults to `http://localhost:8090`)
+- No environment variables needed - the frontend automatically connects to the correct backend URL
 
 ## Development Reminders
 
