@@ -5,11 +5,11 @@ import (
 )
 
 func Register(se *core.ServeEvent) error {
-	// Register index route
-	RegisterIndex(se)
-	
 	// Register health route
 	RegisterHealth(se)
+
+	// Register static file serving for frontend
+	RegisterStatic(se)
 
 	return se.Next()
 }

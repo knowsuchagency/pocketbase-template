@@ -33,6 +33,7 @@ go.work.sum
 
 # Pocketbase
 pb_data/
+pb_public/
 pocketbase
 
 # Claude Code local settings
