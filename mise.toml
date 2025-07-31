@@ -7,6 +7,7 @@ node = "latest"
 # Environment configuration
 [env]
 _.file = ".env"
+COMPOSE_BAKE = "true"
 
 # Task definitions
 [tasks.install-backend-deps]
