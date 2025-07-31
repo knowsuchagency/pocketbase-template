@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useAuthStore } from '~/stores/auth.store';
-import { useAppStore } from '~/stores/app.store';
+import { useAuth } from '~/hooks';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -10,9 +9,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 export function LoginForm() {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
-  const isLoading = useAuthStore((state) => state.isLoading);
-  const addNotification = useAppStore((state) => state.addNotification);
+  const { loginAsync, isLoggingIn } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,14 +19,10 @@ export function LoginForm() {
     e.preventDefault();
 
     try {
-      await login(email, password);
+      await loginAsync({ email, password });
       navigate('/dashboard');
-    } catch (error: any) {
-      addNotification({
-        type: 'error',
-        title: 'Login failed',
-        message: error.message || 'Invalid email or password',
-      });
+    } catch (error) {
+      // Error notification is handled by the useLogin hook
     }
   };
 
@@ -52,7 +45,7 @@ export function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              disabled={isLoading}
+              disabled={isLoggingIn}
             />
           </div>
           <div className="space-y-2">
@@ -64,7 +57,7 @@ export function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={isLoading}
+                disabled={isLoggingIn}
                 className="pr-10"
               />
               <Button
@@ -73,7 +66,7 @@ export function LoginForm() {
                 size="sm"
                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
+                disabled={isLoggingIn}
               >
                 {showPassword ? (
                   <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -88,9 +81,9 @@ export function LoginForm() {
           <Button 
             type="submit" 
             className="w-full h-11 font-medium" 
-            disabled={isLoading}
+            disabled={isLoggingIn}
           >
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoggingIn ? 'Logging in...' : 'Login'}
           </Button>
         </CardFooter>
       </form>

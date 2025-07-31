@@ -6,8 +6,10 @@ This is the frontend for the PocketBase Template project, built with React Route
 
 - **Framework**: React Router v7 (SPA mode with SSR disabled)
 - **Styling**: Tailwind CSS v4 with shadcn/ui components
-- **State Management**: Zustand
-- **Authentication**: PocketBase SDK
+- **State Management**: 
+  - **Server State**: TanStack Query (React Query) for API data and auth
+  - **UI State**: Zustand for local UI state (theme, notifications)
+- **Authentication**: PocketBase SDK with React Query integration
 - **Testing**: Playwright
 
 ## Development
@@ -57,10 +59,42 @@ frontend/
 ├── app/
 │   ├── components/     # React components
 │   ├── config/        # Configuration
+│   ├── hooks/         # React Query hooks
+│   │   ├── queries/   # Data fetching hooks
+│   │   └── mutations/ # Data mutation hooks
 │   ├── lib/           # Utilities
+│   ├── providers/     # React providers (QueryClient)
 │   ├── routes/        # Route components
-│   └── stores/        # Zustand stores
+│   ├── services/      # API service layers
+│   └── stores/        # Zustand stores (UI state only)
 ├── tests/             # Playwright tests
 ├── public/            # Static assets
 └── build/             # Build output (gitignored)
+```
+
+## State Management
+
+The frontend uses a hybrid approach to state management:
+
+### Server State (TanStack Query)
+- Authentication state and user data
+- API responses and cache management
+- Automatic background refetching
+- Optimistic updates for mutations
+
+### UI State (Zustand)
+- Theme preferences
+- Notification system
+- Local UI state that doesn't need server sync
+
+## Authentication
+
+Authentication is handled through a combination of:
+- PocketBase SDK for the actual auth operations
+- TanStack Query for state management and caching
+- Custom hooks (`useAuth`) for easy access throughout the app
+
+Example usage:
+```typescript
+const { user, isAuthenticated, login, logout, isLoading } = useAuth();
 ```
