@@ -1,5 +1,5 @@
-# Frontend build stage
-FROM oven/bun:1 AS frontend-builder
+# Frontend dependencies stage - using Bun for speed
+FROM oven/bun:1 AS frontend-deps
 
 WORKDIR /app
 
@@ -7,12 +7,20 @@ WORKDIR /app
 COPY frontend/package.json frontend/bun.lock ./
 RUN bun install --frozen-lockfile
 
-# Copy frontend source code
+# Frontend build stage - using Node for React Router compatibility
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app
+
+# Copy dependencies from Bun stage
+COPY --from=frontend-deps /app/node_modules ./node_modules
+
+# Copy frontend source code and package files
 COPY frontend .
 
-# Build frontend
+# Build frontend with npm (React Router v7 works better with Node)
 ENV NODE_ENV=production
-RUN bun run build
+RUN npm run build
 
 # Backend build stage
 FROM golang:1.24-alpine AS backend-builder
