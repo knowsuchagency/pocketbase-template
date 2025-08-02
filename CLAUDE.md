@@ -29,3 +29,15 @@ mise run build        # Build for production
 ## Migration Notes
 
 Check PocketBase docs before writing migrations - breaking changes exist pre-1.0.
+
+## Tooling Recommendations
+
+- Use bun over npm
+
+## Development Workflow
+
+- For common development tasks, check whether a mise task exists with `mise t`. If it's something that's likely to be done often, create a mise task and execute it via mise
+
+## Best Practices
+
+- Whenever communicating with an external service such as PocketBase, ensure the interaction is abstracted behind a TanStack query or mutation
