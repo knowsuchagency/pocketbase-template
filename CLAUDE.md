@@ -41,3 +41,7 @@ Check PocketBase docs before writing migrations - breaking changes exist pre-1.0
 ## Best Practices
 
 - Whenever communicating with an external service such as PocketBase, ensure the interaction is abstracted behind a TanStack query or mutation
+
+## shadcn/ui Guidelines
+
+- For basic UI components which have a shadcn implementation always install them using the shadcn cli i.e. `bunx --bun shadcn@latest add button` as opposed to writing them from scratch
