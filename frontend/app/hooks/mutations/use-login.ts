@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { authService, type LoginCredentials, type User } from '~/services/auth.service';
+import pocketbaseService, { type LoginCredentials, type User } from '~/services/pocketbase.service';
 import { userKeys } from '~/hooks/queries/use-user';
 import { useAppStore } from '~/stores/app.store';
 import type { RecordAuthResponse } from 'pocketbase';
@@ -10,7 +10,7 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: async (credentials: LoginCredentials): Promise<RecordAuthResponse<User>> => {
-      return authService.login(credentials);
+      return pocketbaseService.login(credentials);
     },
     onSuccess: (data) => {
       // Update the user query cache

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
-import { authService } from '~/services/auth.service';
+import pocketbaseService from '~/services/pocketbase.service';
 import { userKeys } from '~/hooks/queries/use-user';
 import { useAppStore } from '~/stores/app.store';
 
@@ -11,7 +11,7 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: async () => {
-      await authService.logout();
+      await pocketbaseService.logout();
     },
     onSuccess: () => {
       // Clear all user-related queries

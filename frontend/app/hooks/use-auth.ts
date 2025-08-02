@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { authService } from '~/services/auth.service';
+import pocketbaseService from '~/services/pocketbase.service';
 import { useUser, userKeys } from './queries/use-user';
 import { useLogin } from './mutations/use-login';
 import { useLogout } from './mutations/use-logout';
@@ -13,9 +13,9 @@ export function useAuth() {
 
   // Subscribe to PocketBase auth changes
   useEffect(() => {
-    let previousToken = authService.getToken();
+    let previousToken = pocketbaseService.getToken();
     
-    const unsubscribe = authService.subscribeToAuthChanges((token) => {
+    const unsubscribe = pocketbaseService.subscribeToAuthChanges((token) => {
       // Only invalidate if the token actually changed (login/logout)
       if (token !== previousToken) {
         previousToken = token;

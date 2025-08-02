@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { authService } from '~/services/auth.service';
+import pocketbaseService from '~/services/pocketbase.service';
 import { userKeys } from '~/hooks/queries/use-user';
 
 export function useRefreshAuth() {
@@ -7,7 +7,7 @@ export function useRefreshAuth() {
 
   return useMutation({
     mutationFn: async () => {
-      return authService.refresh();
+      return pocketbaseService.refresh();
     },
     onSuccess: (data) => {
       if (data) {

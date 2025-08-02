@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { authService, type User } from '~/services/auth.service';
+import pocketbaseService, { type User } from '~/services/pocketbase.service';
 
 export const userKeys = {
   all: ['user'] as const,
@@ -11,7 +11,7 @@ export function useUser() {
     queryKey: userKeys.current(),
     queryFn: async (): Promise<User | null> => {
       // First check if we have a valid stored auth
-      const currentUser = authService.getCurrentUser();
+      const currentUser = pocketbaseService.getCurrentUser();
       if (!currentUser) {
         return null;
       }
