@@ -1,6 +1,6 @@
 # PocketBase Template
 
-A modern full-stack template featuring a Go-based [PocketBase](https://pocketbase.io/) backend API and React Router v7 frontend with SSR for Cloudflare Workers, styled with Tailwind CSS and shadcn/ui components.
+A modern full-stack template featuring a Go-based [PocketBase](https://pocketbase.io/) backend API and React Router v7 frontend styled with Tailwind CSS and shadcn/ui components.
 
 This file also provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -255,7 +255,7 @@ The frontend is automatically served from PocketBase at the root path (`/`), whi
 │       ├── health_test.go # Health endpoint tests
 │       └── static_test.go # Static file serving tests
 ├── pb_data/               # PocketBase data (gitignored)
-├── frontend/              # React Router v7 with Cloudflare Workers
+├── frontend/              # React Router v7
 │   ├── app/              
 │   │   ├── components/    # React components
 │   │   │   ├── ui/       # shadcn/ui components
