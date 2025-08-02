@@ -10,22 +10,24 @@ allowed-tools:
   - WebFetch
   - TodoWrite
   - Task
-description: Implement a complete feature for this PocketBase + React Router v7 + Cloudflare Workers project, from data model to frontend with tests
+description: Implement a complete feature for this PocketBase + React Router v7 project, from data model to frontend with tests
 ---
 
 ## Overview
 
 This command implements features end-to-end in this specific project architecture:
+
 - **Backend**: PocketBase (Go) with migration system
-- **Frontend**: React Router v7 with SSR for Cloudflare Workers, Zustand state management, shadcn/ui components
+- **Frontend**: React Router v7 with TanStack Query, Zustand client state management, shadcn/ui components
 - **Testing**: Playwright for end-to-end tests
 
 ## Prerequisites
 
-Before running, ensure:
-1. `requirements.md` exists with clear feature requirements
-2. `layout.md` exists with wireframes and navigation flows
-3. `.env` file exists (if not, stop and tell user to run `mise run init`)
+Before running:
+
+1. If `requirements.md` exists, read it
+2. Ensure `layout.md` exists with wireframes and navigation flows (if not, stop and tell the user to generate the layout file)
+3. Ensure `.env` file exists (if not, stop and tell user to run `mise run init`)
 4. Project dependencies are installed
 
 ## Implementation Process
@@ -33,11 +35,12 @@ Before running, ensure:
 ### Step 1: Initialize Implementation Plan
 
 1. Check prerequisites:
+
    - Verify `.env` file exists. If not, stop and inform user:
      ```
      Error: .env file not found. Please run 'mise run init' to set up the project first.
      ```
-   - Verify `requirements.md` exists
+   - Read `requirements.md` if it exists
    - Verify `layout.md` exists
 
 2. Read `requirements.md` and `layout.md`
@@ -46,13 +49,14 @@ Before running, ensure:
    - [ ] Generate and apply migrations
    - [ ] Implement frontend components
    - [ ] Implement frontend routes
-   - [ ] Integrate with Zustand stores
+   - [ ] Implement TanStack Query mutations and queries
    - [ ] Write and run Playwright tests
    - [ ] Verify all acceptance criteria are met
 
 ### Step 2: Design Data Model
 
 Based on requirements, design PocketBase collections:
+
 1. Identify entities and relationships
 2. Define collection schemas with:
    - Field types and validation rules
@@ -63,16 +67,19 @@ Based on requirements, design PocketBase collections:
 ### Step 3: Create and Apply Migrations
 
 1. **Check PocketBase syntax** - ALWAYS read the latest documentation before writing migrations:
+
    - Read https://pocketbase.io/docs/go-collections/
    - Extract the current Go syntax for creating collections, fields, and relations
    - Pay attention to Collection(), Schema.AddField(), and relation field types
 
 2. **Generate migration files**:
+
    ```bash
    mise run makemigration "create_[feature]_collections"
    ```
 
 3. **Write migration code** following the latest PocketBase syntax:
+
    ```go
    package migrations
 
@@ -93,6 +100,7 @@ Based on requirements, design PocketBase collections:
    ```
 
 4. **Apply migrations**:
+
    ```bash
    mise run migrate
    ```
@@ -105,6 +113,7 @@ Based on requirements, design PocketBase collections:
 ### Step 4: Implement Frontend
 
 **IMPORTANT**: Use the PocketBase SDK directly in the frontend for all data operations. PocketBase automatically generates REST APIs for all collections with built-in:
+
 - CRUD operations (create, read, update, delete)
 - Filtering, sorting, and pagination
 - Real-time subscriptions
@@ -112,39 +121,88 @@ Based on requirements, design PocketBase collections:
 - Authentication and authorization
 
 Only create custom backend routes if you need:
+
 - Complex business logic that can't be handled by PocketBase rules
 - Integration with external services
 - Custom data transformations
 - Batch operations across multiple collections
 
-#### 4.1 Create Zustand Store (if needed)
+#### 4.1 Create TanStack Query Hooks
 
-Create stores in `frontend/app/stores/`:
+Create query and mutation hooks in `frontend/app/hooks/`:
+
 ```typescript
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import pb from '~/lib/pocketbase';
+import { useQuery, useMutation, useQueryClient } from "@TanStack/react-query";
+import pb from "~/lib/pocketbase";
+import type { RecordModel } from "pocketbase";
 
-interface FeatureStore {
-  // State
-  items: any[];
-  loading: boolean;
-  
-  // Actions
-  fetchItems: () => Promise<void>;
-  createItem: (data: any) => Promise<void>;
+// Query hook for fetching data
+export function useFeatureItems() {
+  return useQuery({
+    queryKey: ["feature-items"],
+    queryFn: async () => {
+      return await pb.collection("items").getFullList({
+        sort: "-created",
+      });
+    },
+  });
 }
 
-export const useFeatureStore = create<FeatureStore>()(
-  persist(
-    (set, get) => ({
-      // Implementation
-    }),
-    {
-      name: 'feature-store',
-    }
-  )
-);
+// Query hook for single item
+export function useFeatureItem(id: string) {
+  return useQuery({
+    queryKey: ["feature-items", id],
+    queryFn: async () => {
+      return await pb.collection("items").getOne(id);
+    },
+    enabled: !!id,
+  });
+}
+
+// Mutation hook for creating items
+export function useCreateFeatureItem() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (data: Partial<RecordModel>) => {
+      return await pb.collection("items").create(data);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch items list
+      queryClient.invalidateQueries({ queryKey: ["feature-items"] });
+    },
+  });
+}
+
+// Mutation hook for updating items
+export function useUpdateFeatureItem() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<RecordModel> }) => {
+      return await pb.collection("items").update(id, data);
+    },
+    onSuccess: (_, { id }) => {
+      // Invalidate both the item and the list
+      queryClient.invalidateQueries({ queryKey: ["feature-items"] });
+      queryClient.invalidateQueries({ queryKey: ["feature-items", id] });
+    },
+  });
+}
+
+// Mutation hook for deleting items
+export function useDeleteFeatureItem() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (id: string) => {
+      return await pb.collection("items").delete(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feature-items"] });
+    },
+  });
+}
 ```
 
 #### 4.2 Create UI Components
@@ -157,6 +215,7 @@ export const useFeatureStore = create<FeatureStore>()(
 
 1. Add route files in `frontend/app/routes/`
 2. Update `frontend/routes.ts` with new route definitions:
+
    ```typescript
    {
      path: "/feature",
@@ -177,6 +236,7 @@ Update relevant navigation components to include links to new features.
 ### Step 5: Write and Run Tests
 
 1. **Create Playwright tests** in `frontend/tests/` that:
+
    - Cover all acceptance criteria from requirements.md
    - Test all user journeys from layout.md
    - Verify data persistence and proper permissions
@@ -184,16 +244,17 @@ Update relevant navigation components to include links to new features.
    - Check responsive design on mobile/desktop viewports
 
    ```typescript
-   import { test, expect } from '@playwright/test';
+   import { test, expect } from "@playwright/test";
 
-   test.describe('Feature Name', () => {
-     test('acceptance criteria 1', async ({ page }) => {
+   test.describe("Feature Name", () => {
+     test("acceptance criteria 1", async ({ page }) => {
        // Test implementation
      });
    });
    ```
 
 2. **Run tests** (Playwright will automatically start frontend and backend servers):
+
    ```bash
    mise run test-frontend
    ```
@@ -208,16 +269,19 @@ Note: The Playwright configuration automatically starts both the PocketBase back
 ### Step 6: Final Checks
 
 1. **Run type checking**:
+
    ```bash
    mise run typecheck
    ```
 
 2. **Run all tests**:
+
    ```bash
    mise run test
    ```
 
 3. **Build for production**:
+
    ```bash
    mise run build
    ```
@@ -227,6 +291,7 @@ Note: The Playwright configuration automatically starts both the PocketBase back
 ## Important Reminders
 
 ### PocketBase Specifics
+
 - Always check latest PocketBase documentation for migration syntax
 - Use PocketBase's built-in auth system - don't reinvent
 - Leverage PocketBase's realtime subscriptions when appropriate
@@ -235,19 +300,21 @@ Note: The Playwright configuration automatically starts both the PocketBase back
 - PocketBase auto-generates REST APIs for all collections - use them!
 
 ### Frontend Architecture
-- Use Hono app context in Cloudflare Workers
-- Leverage React Router v7's SSR capabilities
-- Use Zustand for state management, not Context API
+
+- Use TanStack Query for data fetching and server state
+- Use Zustand for client state management
 - Import shadcn components from `~/components/ui/`
 - Follow existing patterns for consistency
 
 ### Testing
+
 - Playwright tests should cover all acceptance criteria
 - Use proper test data cleanup
 - Test both happy paths and error scenarios
 - Verify responsive behavior in tests
 
 ### Common Pitfalls to Avoid
+
 - Don't forget to apply migrations before testing
 - Don't hardcode URLs - use environment variables
 - Don't skip error handling in frontend
@@ -257,12 +324,14 @@ Note: The Playwright configuration automatically starts both the PocketBase back
 ## Command Completion
 
 When implementation is complete:
+
 1. All todos should be marked as completed
 2. All acceptance criteria should be met
 3. All tests should be passing
 4. The feature should work end-to-end in development
 
 Alert the user of completion:
+
 ```bash
 klaxon --title "🚀 Claude Code" --subtitle "✅ Implementation Complete" --message "Feature successfully implemented with passing tests"
 ```
