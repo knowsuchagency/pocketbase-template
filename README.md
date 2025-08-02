@@ -163,30 +163,34 @@ The frontend tests are configured to:
 
 #### Key Frontend Components
 
-- **Routes Configuration** (`frontend/routes.ts`):
+- **Routes Configuration** (`frontend/app/routes.ts`):
   - Explicit route definitions for React Router v7
   - Lazy loading for route components
   - Configured in `react-router.config.ts` with SSR disabled (SPA mode)
 
-- **Auth Service** (`frontend/app/services/auth.service.ts`):
-  - Handles PocketBase authentication operations
-  - Supports both user and admin authentication
-  - Token refresh and validation
+- **PocketBase Service** (`frontend/app/services/pocketbase.service.ts`):
+  - Configured PocketBase SDK instance
+  - Auto-cancellation disabled for better control
+  - Automatic backend URL detection based on environment
 
 - **Auth Hooks** (`frontend/app/hooks/use-auth.ts`):
   - React Query-based authentication hooks
   - Provides `useAuth()` for easy auth access
   - Automatic caching and state synchronization
 
+- **Query/Mutation Hooks** (`frontend/app/hooks/mutations/` & `frontend/app/hooks/queries/`):
+  - TanStack Query mutations for login, logout, refresh
+  - User data queries with automatic caching
+  - Centralized API state management
+
 - **App Store** (`frontend/app/stores/app.store.ts`):
   - Manages global application state
   - Handles notifications system
   - Manages loading states
 
-- **PocketBase Client** (`frontend/app/lib/pocketbase.ts`):
-  - Configured PocketBase SDK instance
-  - Auto-cancellation disabled for better control
-  - Automatic backend URL detection based on environment
+- **Theme Store** (`frontend/app/stores/theme.store.ts`):
+  - Dark/light theme persistence
+  - System theme detection
 
 - **Protected Routes** (`frontend/app/components/ProtectedRoute.tsx`): Wrapper for auth-required pages
 - **Login Form** (`frontend/app/components/LoginForm.tsx`): Full authentication flow with error handling
@@ -242,7 +246,7 @@ The frontend is automatically served from PocketBase at the root path (`/`), whi
 ```
 ├── main.go                 # Backend entry point
 ├── .claude/               # Claude Code configuration and commands
-│   └── commands/          # Custom slash commands
+│   └── settings.local.json # Local Claude settings
 ├── migrations/             # Database migrations
 ├── routes/                 # Backend route handlers
 │   ├── health.go          # Health check endpoint
@@ -258,17 +262,29 @@ The frontend is automatically served from PocketBase at the root path (`/`), whi
 │   │   ├── components/    # React components
 │   │   │   ├── ui/       # shadcn/ui components
 │   │   │   └── *.tsx     # App-specific components
-│   │   ├── config/       # Configuration constants
-│   │   ├── lib/          # Utilities and PocketBase client
+│   │   ├── hooks/        # React hooks
+│   │   │   ├── mutations/# TanStack Query mutations
+│   │   │   ├── queries/  # TanStack Query queries
+│   │   │   └── use-auth.ts # Auth hook
+│   │   ├── lib/          # Utilities
+│   │   ├── providers/    # React providers
 │   │   ├── routes/       # Route components
-│   │   └── stores/       # Zustand state stores
+│   │   ├── services/     # Service layer
+│   │   │   └── pocketbase.service.ts # PocketBase client
+│   │   ├── stores/       # Zustand state stores
+│   │   │   ├── app.store.ts    # App state (notifications)
+│   │   │   └── theme.store.ts  # Theme state
+│   │   ├── root.tsx      # Root component
+│   │   └── routes.ts     # Route definitions
 │   ├── tests/            # Playwright tests
 │   ├── build/            # Build output (gitignored)
 │   ├── .env.example      # Example environment variables
-│   ├── react-router.config.ts # React Router configuration
-│   ├── routes.ts         # React Router routes definition
 │   ├── components.json   # shadcn/ui configuration
-│   └── package.json      # Frontend dependencies
+│   ├── package.json      # Frontend dependencies
+│   ├── playwright.config.ts # Playwright configuration
+│   ├── react-router.config.ts # React Router configuration
+│   ├── tsconfig.json     # TypeScript configuration
+│   └── vite.config.ts    # Vite configuration
 ├── Dockerfile             # Full-stack Docker build
 ├── docker-compose.yml     # Container orchestration
 ├── mise.toml             # Task automation and tool version management
