@@ -38,4 +38,7 @@ pocketbase
 
 # Claude Code local settings
 .claude/settings.local.json
-frontend/playwright-report/index.html
+
+# Frontend test artifacts
+frontend/test-results/
+frontend/playwright-report/
