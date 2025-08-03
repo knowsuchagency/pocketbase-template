@@ -336,4 +336,25 @@ Alert the user of completion:
 klaxon --title "🚀 Claude Code" --subtitle "✅ Implementation Complete" --message "Feature successfully implemented with passing tests"
 ```
 
+## Migration Notes
+
+Check PocketBase docs before writing migrations - breaking changes exist pre-1.0. https://pocketbase.io/docs/go-collections/
+
+## Tooling Recommendations
+
+- Use bun over npm
+
+## Development Workflow
+
+- For common development tasks, check whether a mise task exists with `mise t`. If it's something that's likely to be done often, create a mise task and execute it via mise
+
+## Best Practices
+
+- Whenever communicating with an external service such as PocketBase, ensure the interaction is abstracted behind a TanStack query or mutation
+
+## shadcn/ui Guidelines
+
+- For basic UI components which have a shadcn implementation always install them using the shadcn cli i.e. `bunx --bun shadcn@latest add button` as opposed to writing them from scratch
+
+
 $ARGUMENTS

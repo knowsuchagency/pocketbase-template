@@ -28,7 +28,7 @@ mise run build        # Build for production
 
 ## Migration Notes
 
-Check PocketBase docs before writing migrations - breaking changes exist pre-1.0.
+Check PocketBase docs before writing migrations - breaking changes exist pre-1.0. https://pocketbase.io/docs/go-collections/
 
 ## Tooling Recommendations
 
