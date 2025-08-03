@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
-import { useAuth } from '~/hooks';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
-import { useNavigate } from 'react-router';
-import type { Route } from './+types/dashboard';
+import { useEffect } from "react";
+import { useAuth } from "~/hooks";
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { useNavigate } from "react-router";
+import type { Route } from "./+types/dashboard";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Dashboard - PocketBase Template' },
-    { name: 'description', content: 'User dashboard' },
+    { title: "Dashboard - PocketBase Project" },
+    { name: "description", content: "User dashboard" },
   ];
 }
 
@@ -18,7 +24,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      navigate('/');
+      navigate("/");
     }
   }, [isAuthenticated, isLoading, navigate]);
 
@@ -53,7 +59,8 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-400">
-              This is a protected dashboard page. Only authenticated users can see this content.
+              This is a protected dashboard page. Only authenticated users can
+              see this content.
             </p>
           </CardContent>
         </Card>

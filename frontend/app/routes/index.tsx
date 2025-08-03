@@ -1,13 +1,13 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
-import { LoginForm } from '~/components/LoginForm';
-import { useAuth } from '~/hooks';
-import type { Route } from './+types/index';
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { LoginForm } from "~/components/LoginForm";
+import { useAuth } from "~/hooks";
+import type { Route } from "./+types/index";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Login - PocketBase Template' },
-    { name: 'description', content: 'Login to your account' },
+    { title: "Login - PocketBase Project" },
+    { name: "description", content: "Login to your account" },
   ];
 }
 
@@ -17,7 +17,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   }, [isAuthenticated, isLoading, navigate]);
 
