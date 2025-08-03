@@ -1,12 +1,12 @@
-# PocketBase Template Frontend
+# PocketBase Project Frontend
 
-This is the frontend for the PocketBase Template project, built with React Router v7 in SPA mode.
+This is the frontend for the PocketBase Project project, built with React Router v7 in SPA mode.
 
 ## Architecture
 
 - **Framework**: React Router v7 (SPA mode with SSR disabled)
 - **Styling**: Tailwind CSS v4 with shadcn/ui components
-- **State Management**: 
+- **State Management**:
   - **Server State**: TanStack Query (React Query) for API data and auth
   - **UI State**: Zustand for local UI state (theme, notifications)
 - **Authentication**: PocketBase SDK with React Query integration
@@ -77,12 +77,14 @@ frontend/
 The frontend uses a hybrid approach to state management:
 
 ### Server State (TanStack Query)
+
 - Authentication state and user data
 - API responses and cache management
 - Automatic background refetching
 - Optimistic updates for mutations
 
 ### UI State (Zustand)
+
 - Theme preferences
 - Notification system
 - Local UI state that doesn't need server sync
@@ -90,11 +92,13 @@ The frontend uses a hybrid approach to state management:
 ## Authentication
 
 Authentication is handled through a combination of:
+
 - PocketBase SDK for the actual auth operations
 - TanStack Query for state management and caching
 - Custom hooks (`useAuth`) for easy access throughout the app
 
 Example usage:
+
 ```typescript
 const { user, isAuthenticated, login, logout, isLoading } = useAuth();
 ```
