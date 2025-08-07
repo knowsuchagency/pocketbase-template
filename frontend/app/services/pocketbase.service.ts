@@ -33,14 +33,14 @@ class PocketBaseService {
   // Auth methods
   async login(credentials: LoginCredentials): Promise<RecordAuthResponse<User>> {
     const { email, password } = credentials;
-    
-    try {
-      // Try to authenticate as a regular user first
-      return await this.pb.collection('users').authWithPassword<User>(email, password);
-    } catch (userError) {
-      // If user auth fails, try admin auth (superusers collection)
-      return await this.pb.collection('_superusers').authWithPassword<User>(email, password);
-    }
+    // Authenticate as a regular user only
+    return await this.pb.collection('users').authWithPassword<User>(email, password);
+  }
+
+  async loginAsSuperuser(credentials: LoginCredentials): Promise<RecordAuthResponse<User>> {
+    const { email, password } = credentials;
+    // Authenticate as a superuser/admin
+    return await this.pb.collection('_superusers').authWithPassword<User>(email, password);
   }
 
   async logout(): Promise<void> {
