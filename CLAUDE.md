@@ -32,13 +32,43 @@ Check PocketBase docs before writing migrations - breaking changes exist pre-1.0
 
 ### PocketBase Migration Syntax (v0.29+)
 
-- Use `"github.com/pocketbase/pocketbase/tools/types"` for `types.Pointer()`
+#### Field Types and Common Issues
+- Use `"github.com/pocketbase/pocketbase/tools/types"` for `types.Pointer()` (only needed for pointers, not regular int values)
 - Use `core.URLField` instead of `core.TextField` with URL validators
 - For date fields that aren't auto-generated, use `core.DateField` instead of `core.AutodateField` with `OnCreate: false, OnUpdate: false`
 - AutodateField requires at least one of `OnCreate` or `OnUpdate` to be true
+- EditorField uses `MaxSize` not `Max` property
+- RelationField uses `MaxSelect` (int) not `Max` property
+- NumberField with `OnlyInt: true` needs `Min: types.Pointer(0.0)` for min value
+
+#### Collection Relations
 - For self-referencing relations, save the collection first, then add the relation field in a separate migration
 - MaxSelect for SelectField cannot exceed the number of available values
-- Relation fields should use `collection.Id` not string collection names
+- Relation fields should use actual collection IDs:
+  - Users collection: use `"_pb_users_auth_"` not `"users"`
+  - Other collections: use `collection.Id` after finding/creating them
+- When creating relations between collections that don't exist yet:
+  1. Create all base collections first
+  2. Add relations in a separate migration after all collections exist
+  3. For complex dependencies, use placeholder text fields then replace in later migration
+
+#### Migration Order and Dependencies
+- Migrations run in filename order (timestamp prefix)
+- Create collections in dependency order:
+  1. Independent collections first (users, categories, tags)
+  2. Collections with one-way relations (posts, newsletter)
+  3. Collections with complex relations (comments)
+  4. Relation fix-up migrations last
+- Use `app.FindCollectionByNameOrId()` to get existing collections
+- Always check for errors when finding collections
+
+#### Collection Rules
+- Use `types.Pointer("")` for empty/public rules
+- Use `types.Pointer("@request.auth.id != ''")` for authenticated-only access
+- Common rule patterns:
+  - Public read: `ListRule = types.Pointer("")`
+  - Owner-only edit: `UpdateRule = types.Pointer("author = @request.auth.id")`
+  - Published content: `ViewRule = types.Pointer("status = 'published' || author = @request.auth.id")`
 
 ## Tooling Recommendations
 
