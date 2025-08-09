@@ -30,6 +30,16 @@ mise run build        # Build for production
 
 Check PocketBase docs before writing migrations - breaking changes exist pre-1.0. https://pocketbase.io/docs/go-collections/
 
+### PocketBase Migration Syntax (v0.29+)
+
+- Use `"github.com/pocketbase/pocketbase/tools/types"` for `types.Pointer()`
+- Use `core.URLField` instead of `core.TextField` with URL validators
+- For date fields that aren't auto-generated, use `core.DateField` instead of `core.AutodateField` with `OnCreate: false, OnUpdate: false`
+- AutodateField requires at least one of `OnCreate` or `OnUpdate` to be true
+- For self-referencing relations, save the collection first, then add the relation field in a separate migration
+- MaxSelect for SelectField cannot exceed the number of available values
+- Relation fields should use `collection.Id` not string collection names
+
 ## Tooling Recommendations
 
 - Use bun over npm
