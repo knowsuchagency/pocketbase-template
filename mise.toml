@@ -128,14 +128,7 @@ run = "go list -m -u all"
 
 [tasks.show-collections]
 description = "Show collections in a human and LLM readable format (use --hidden to include hidden collections)"
-run = '''
-#!/bin/bash
-FLAGS=""
-if [[ "{{flag(name="hidden")}}" == "true" ]]; then
-    FLAGS="--show-hidden"
-fi
-go run cmd/show-collections.go show-collections $FLAGS 2>&1 | grep -v -E '^\[[0-9]+(\.[0-9]+)?ms\]'
-'''
+run = "go run cmd/show-collections.go show-collections"
 
 [tasks.clean]
 description = "Clean build artifacts"
