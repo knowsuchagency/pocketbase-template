@@ -36,7 +36,6 @@ Check PocketBase docs before writing migrations - breaking changes exist pre-1.0
 - Use `core.NewBaseCollection("name")` to create a new collection
 - Use `collection.Fields.Add()` to add fields to the collection
 - Collections must be saved with `app.Save(collection)`
-- For auth collections, use `core.NewAuthCollection("name")`
 
 #### Field Types and Common Issues
 - Use `"github.com/pocketbase/pocketbase/tools/types"` for `types.Pointer()` (only needed for pointers, not regular int values)
@@ -56,23 +55,24 @@ Check PocketBase docs before writing migrations - breaking changes exist pre-1.0
 - MaxSelect for SelectField cannot exceed the number of available values
 - Relation fields should use actual collection IDs:
   - Users collection: use `"_pb_users_auth_"` not `"users"`
-  - Other collections: use `collection.Id` after finding/creating them
-- When creating relations between collections that don't exist yet:
-  1. Create all base collections first with placeholder TextField instead of RelationField
-  2. Create a fix_relations migration to:
-     - Remove placeholder fields: `collection.Fields.RemoveByName("fieldname")`
-     - Add proper RelationField with correct CollectionId
-  3. Update rules that reference relations in a separate migration after relations are fixed
-- IMPORTANT: Rules that reference relation fields (e.g., `author.user = @request.auth.id`) will fail if the field is not yet a proper relation
+  - Other collections: use `collection.Id` after finding them with `app.FindCollectionByNameOrId()`
+- When creating relations to existing collections, fetch them first in the migration:
+  ```go
+  authorsCollection, err := app.FindCollectionByNameOrId("authors")
+  if err != nil {
+      return err
+  }
+  // Then use: CollectionId: authorsCollection.Id
+  ```
 
 #### Migration Order and Dependencies
 - Migrations run in filename order (timestamp prefix)
 - Create collections in dependency order:
-  1. Independent collections first (users, categories, tags)
-  2. Collections with one-way relations (posts, newsletter)
-  3. Collections with complex relations (comments)
-  4. Relation fix-up migrations (convert text fields to relations)
-  5. Rule update migrations (add rules that reference relations)
+  1. Independent collections first (categories, newsletter)
+  2. Collections that depend only on system collections (authors depends on users)
+  3. Collections with relations to other custom collections (posts depends on authors & categories)
+  4. Collections with complex dependencies (comments depends on posts & users)
+  5. Self-referencing relations in separate migrations
 - Use `app.FindCollectionByNameOrId()` to get existing collections
 - Always check for errors when finding collections
 - Each migration needs both up and down functions (down can return nil if not reversible)
@@ -86,30 +86,46 @@ Check PocketBase docs before writing migrations - breaking changes exist pre-1.0
   - Published content: `ViewRule = types.Pointer("status = 'published' || author = @request.auth.id")`
 
 #### Migration Example Pattern
-When creating related collections, follow this pattern:
+When creating related collections, follow proper dependency order:
 ```go
-// 1_create_posts.go - Create with placeholder text field
-collection := core.NewBaseCollection("posts")
+// 1_create_categories.go - Independent collection
+collection := core.NewBaseCollection("categories")
 collection.Fields.Add(
-    &core.TextField{Name: "author", Required: true}, // Placeholder
+    &core.TextField{Name: "name", Required: true},
     // ... other fields
 )
 
-// 2_fix_relations.go - Convert to proper relation
-postsCollection, _ := app.FindCollectionByNameOrId("posts")
+// 2_create_authors.go - Depends on system users collection
+collection := core.NewBaseCollection("authors")
+collection.Fields.Add(
+    &core.RelationField{
+        Name: "user",
+        Required: true,
+        MaxSelect: 1,
+        CollectionId: "_pb_users_auth_",
+    },
+)
+
+// 3_create_posts.go - Depends on authors and categories
 authorsCollection, _ := app.FindCollectionByNameOrId("authors")
-postsCollection.Fields.RemoveByName("author")
-postsCollection.Fields.Add(
+categoriesCollection, _ := app.FindCollectionByNameOrId("categories")
+
+collection := core.NewBaseCollection("posts")
+collection.Fields.Add(
     &core.RelationField{
         Name: "author",
         Required: true,
         MaxSelect: 1,
         CollectionId: authorsCollection.Id,
     },
+    &core.RelationField{
+        Name: "categories",
+        MaxSelect: 5,
+        CollectionId: categoriesCollection.Id,
+    },
 )
-
-// 3_update_rules.go - Add rules that reference relations
-postsCollection.UpdateRule = types.Pointer("author.user = @request.auth.id")
+// Rules can reference relations immediately
+collection.UpdateRule = types.Pointer("author.user = @request.auth.id")
 ```
 
 ## Tooling Recommendations
@@ -127,3 +143,7 @@ postsCollection.UpdateRule = types.Pointer("author.user = @request.auth.id")
 ## shadcn/ui Guidelines
 
 - For basic UI components which have a shadcn implementation always install them using the shadcn cli i.e. `bunx --bun shadcn@latest add button` as opposed to writing them from scratch
+
+## Miscellaneous
+
+- The `show-collections` mise task can be flaky
