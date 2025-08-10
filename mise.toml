@@ -143,8 +143,26 @@ rm -f pocketbase
 echo "✅ Build artifacts cleaned"
 """
 
+[tasks.backup]
+description = "Backup the database to system temp directory"
+run = """
+#!/bin/bash
+if [ -f "./pb_data/data.db" ]; then
+    BACKUP_DIR="/tmp"
+    # Remove trailing slash if present
+    BACKUP_DIR="${BACKUP_DIR%/}"
+    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+    BACKUP_FILE="$BACKUP_DIR/pocketbase_backup_${TIMESTAMP}.db"
+    cp ./pb_data/data.db "$BACKUP_FILE"
+    echo "📦 Database backed up to: $BACKUP_FILE"
+else
+    echo "⚠️  No database file found to backup."
+fi
+"""
+
 [tasks.reset]
 description = "Reset the database"
+depends = ["backup"]
 run = """
 #!/bin/bash
 echo "⚠️  WARNING: This will permanently delete all database data!"
