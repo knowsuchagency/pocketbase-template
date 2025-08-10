@@ -175,9 +175,11 @@ When working with migrations in this project, you should use the following mise 
 - `mise run migrate` - Run all pending database migrations
 - `mise run migratedown` - Rollback the last database migration
 - `mise run show-collections` - Show current collections in human/LLM readable format
-- `mise run show-collections --hidden` - Include hidden collections in the output
+- `mise run backup` - Backup the current database to /tmp
 
 Always use these tasks instead of running go commands directly to ensure consistency with the project's workflow.
+
+**IMPORTANT**: Always run `mise run backup` prior to destructive database changes!
 
 ## Field Type Reference
 
