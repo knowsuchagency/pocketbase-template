@@ -179,6 +179,12 @@ When working with migrations in this project, you should use the following mise 
 
 Always use these tasks instead of running go commands directly to ensure consistency with the project's workflow.
 
+**CRITICAL WORKFLOW**: 
+1. Write ONE migration at a time
+2. Execute it immediately with `mise run migrate`
+3. Verify it worked correctly before writing the next migration
+4. NEVER write multiple migrations without running them in between
+
 **IMPORTANT**: Always run `mise run backup` prior to destructive database changes!
 
 ## Field Type Reference
