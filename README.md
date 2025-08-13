@@ -333,8 +333,3 @@ Then edit the generated file in the `migrations/` directory. For collection migr
 
 ### Frontend
 - No environment variables needed - the frontend automatically connects to the correct backend URL
-
-## Development Reminders
-
-- **Migrations**: 
-  - Remember to check https://pocketbase.io/docs/go-collections/ before writing PocketBase migrations -- there are often breaking changes in syntax prior to PocketBase 1.0
