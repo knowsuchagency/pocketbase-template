@@ -1,13 +1,13 @@
 # Tool version management
 [tools]
-go = "1.24.4"
 bun = "latest"
+go = "1.24.4"
 node = "latest"
 
 # Environment configuration
 [env]
-_.file = ".env"
 COMPOSE_BAKE = "true"
+_.file = ".env"
 
 # Task definitions
 [tasks.install-backend-deps]
@@ -19,12 +19,12 @@ description = "Install frontend dependencies"
 run = "cd frontend && bun install"
 
 [tasks.install-deps]
-description = "Install all dependencies (backend and frontend)"
 depends = ["install-backend-deps", "install-frontend-deps"]
+description = "Install all dependencies (backend and frontend)"
 
 [tasks.init]
-description = "Initialize the project"
 depends = ["install-deps"]
+description = "Initialize the project"
 run = '''
 #!/bin/bash
 if [ ! -f .env ]; then
@@ -92,8 +92,8 @@ description = "Run frontend tests"
 run = "cd frontend && bun run test"
 
 [tasks.test]
-description = "Run all tests"
 depends = ["test-backend", "test-frontend"]
+description = "Run all tests"
 
 [tasks.makemigration]
 description = "Create a new database migration with the specified name"
@@ -152,7 +152,8 @@ if [ -f "./pb_data/data.db" ]; then
     # Remove trailing slash if present
     BACKUP_DIR="${BACKUP_DIR%/}"
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    BACKUP_FILE="$BACKUP_DIR/pocketbase_backup_${TIMESTAMP}.db"
+    PROJECT_NAME=$(basename "$PWD")
+    BACKUP_FILE="$BACKUP_DIR/${PROJECT_NAME}_pocketbase_backup_${TIMESTAMP}.db"
     cp ./pb_data/data.db "$BACKUP_FILE"
     echo "📦 Database backed up to: $BACKUP_FILE"
 else
@@ -161,8 +162,8 @@ fi
 """
 
 [tasks.reset]
-description = "Reset the database"
 depends = ["backup"]
+description = "Reset the database"
 run = """
 #!/bin/bash
 echo "⚠️  WARNING: This will permanently delete all database data!"
