@@ -23,7 +23,7 @@ ENV NODE_ENV=production
 RUN npm run build
 
 # Backend build stage
-FROM golang:1.24-alpine AS backend-builder
+FROM golang:1.25-alpine AS backend-builder
 
 WORKDIR /build
 
