@@ -11,6 +11,7 @@ allowed-tools:
   - TodoWrite
   - Task
 description: Implement a complete feature for this PocketBase + React Router v7 project, from data model to frontend with tests
+model: claude-opus-4-1
 ---
 
 ## Overview
@@ -66,49 +67,16 @@ Based on requirements, design PocketBase collections:
 
 ### Step 3: Create and Apply Migrations
 
-1. **Check PocketBase syntax** - ALWAYS read the latest documentation before writing migrations:
+**Use the pocketbase-migration-expert agent** for all migration tasks:
 
-   - Read https://pocketbase.io/docs/go-collections/
-   - Extract the current Go syntax for creating collections, fields, and relations
-   - Pay attention to Collection(), Schema.AddField(), and relation field types
-
-2. **Generate migration files**:
-
-   ```bash
-   mise run makemigration "create_[feature]_collections"
-   ```
-
-3. **Write migration code** following the latest PocketBase syntax:
-
-   ```go
-   package migrations
-
-   import (
-       "github.com/pocketbase/pocketbase/core"
-       m "github.com/pocketbase/pocketbase/migrations"
-   )
-
-   func init() {
-       m.Register(func(app core.App) error {
-           // Create collections here
-           return nil
-       }, func(app core.App) error {
-           // Rollback logic here
-           return nil
-       })
-   }
-   ```
-
-4. **Apply migrations**:
-
-   ```bash
-   mise run migrate
-   ```
-
-5. **Verify collections**:
-   ```bash
-   mise run show-collections
-   ```
+Use the Task tool to invoke the pocketbase-migration-expert subagent with a detailed description of the collections and fields you need. The agent will:
+- Generate migration files using `mise run makemigration`
+- Create properly structured migration files with correct syntax
+- Handle field types, relations, and validation
+- Follow PocketBase best practices and latest syntax
+- Include proper rollback logic
+- Apply migrations using `mise run migrate`
+- Verify collections are created correctly using `mise run show-collections`
 
 ### Step 4: Implement Frontend
 
@@ -292,7 +260,7 @@ Note: The Playwright configuration automatically starts both the PocketBase back
 
 ### PocketBase Specifics
 
-- Always check latest PocketBase documentation for migration syntax
+- Use the pocketbase-migration-expert agent for all migration tasks
 - Use PocketBase's built-in auth system - don't reinvent
 - Leverage PocketBase's realtime subscriptions when appropriate
 - Use the PocketBase SDK on the frontend for all standard CRUD operations
@@ -338,7 +306,7 @@ klaxon --title "🚀 Claude Code" --subtitle "✅ Implementation Complete" --mes
 
 ## Migration Notes
 
-Check PocketBase docs before writing migrations - breaking changes exist pre-1.0. https://pocketbase.io/docs/go-collections/
+Use the pocketbase-migration-expert agent for all migration tasks. The agent has up-to-date knowledge of PocketBase syntax and handles version compatibility automatically.
 
 ## Tooling Recommendations
 
