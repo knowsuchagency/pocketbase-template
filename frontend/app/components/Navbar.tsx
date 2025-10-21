@@ -9,30 +9,28 @@ export function Navbar() {
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-4 flex">
-          <Link to="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold">PocketBase Project</span>
-          </Link>
-        </div>
-        <div className="flex flex-1 items-center justify-end space-x-2">
+      <div className="container mx-auto flex h-14 items-center justify-between px-4">
+        <Link to="/" className="flex items-center space-x-2">
+          <span className="font-bold">PocketBase Project</span>
+        </Link>
+        <div className="flex items-center gap-2">
           {isAuthenticated ? (
+            <Button variant="ghost" onClick={() => logout()}>
+              Logout
+            </Button>
+          ) : (
             <>
-              {location.pathname !== "/dashboard" && (
+              {location.pathname !== "/login" && (
                 <Button variant="ghost" asChild>
-                  <Link to="/dashboard">Dashboard</Link>
+                  <Link to="/login">Login</Link>
                 </Button>
               )}
-              <Button variant="ghost" onClick={() => logout()}>
-                Logout
-              </Button>
+              {location.pathname !== "/signup" && (
+                <Button asChild>
+                  <Link to="/signup">Sign Up</Link>
+                </Button>
+              )}
             </>
-          ) : (
-            location.pathname !== "/" && (
-              <Button variant="ghost" asChild>
-                <Link to="/">Login</Link>
-              </Button>
-            )
           )}
           <ThemeToggle />
         </div>

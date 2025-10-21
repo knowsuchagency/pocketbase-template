@@ -9,7 +9,6 @@ import {
 import { useEffect } from "react";
 import { useThemeStore } from "~/stores/theme.store";
 import { NotificationList } from "~/components/NotificationList";
-import { FloatingThemeToggle } from "~/components/FloatingThemeToggle";
 import { QueryProvider } from "~/providers";
 
 import type { Route } from "./+types/root";
@@ -94,7 +93,6 @@ export default function App() {
     <QueryProvider>
       <Outlet />
       <NotificationList />
-      <FloatingThemeToggle />
     </QueryProvider>
   );
 }

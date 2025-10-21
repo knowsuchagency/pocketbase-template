@@ -16,6 +16,13 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface SignupCredentials {
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  name?: string;
+}
+
 class PocketBaseService {
   private pb: PocketBase;
 
@@ -41,6 +48,20 @@ class PocketBaseService {
     const { email, password } = credentials;
     // Authenticate as a superuser/admin
     return await this.pb.collection('_superusers').authWithPassword<User>(email, password);
+  }
+
+  async signup(credentials: SignupCredentials): Promise<RecordAuthResponse<User>> {
+    const { email, password, passwordConfirm, name } = credentials;
+    // Create the user account
+    const user = await this.pb.collection('users').create<User>({
+      email,
+      password,
+      passwordConfirm,
+      name,
+    });
+
+    // Automatically log in the user after signup
+    return await this.login({ email, password });
   }
 
   async logout(): Promise<void> {

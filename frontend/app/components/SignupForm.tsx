@@ -7,22 +7,30 @@ import { Label } from '~/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
 import { Eye, EyeOff } from 'lucide-react';
 
-export function LoginForm() {
+export function SignupForm() {
   const navigate = useNavigate();
-  const { loginAsync, isLoggingIn } = useAuth();
+  const { signupAsync, isSigningUp } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (password !== passwordConfirm) {
+      // Error will be shown via notification
+      return;
+    }
+
     try {
-      await loginAsync({ email, password });
+      await signupAsync({ email, password, passwordConfirm, name: name || undefined });
       navigate('/');
     } catch (error) {
-      // Error notification is handled by the useLogin hook
+      // Error notification is handled by the useSignup hook
     }
   };
 
@@ -30,12 +38,23 @@ export function LoginForm() {
     <Card className="w-full max-w-sm shadow-lg">
       <form onSubmit={handleSubmit}>
         <CardHeader className="space-y-1 pb-6">
-          <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            Enter your details to get started
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Name (optional)</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="John Doe"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isSigningUp}
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -45,7 +64,7 @@ export function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              disabled={isLoggingIn}
+              disabled={isSigningUp}
             />
           </div>
           <div className="space-y-2">
@@ -57,7 +76,7 @@ export function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={isLoggingIn}
+                disabled={isSigningUp}
                 className="pr-10"
               />
               <Button
@@ -66,9 +85,37 @@ export function LoginForm() {
                 size="sm"
                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoggingIn}
+                disabled={isSigningUp}
               >
                 {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <Eye className="h-4 w-4 text-muted-foreground" />
+                )}
+              </Button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="passwordConfirm">Confirm Password</Label>
+            <div className="relative">
+              <Input
+                id="passwordConfirm"
+                type={showPasswordConfirm ? 'text' : 'password'}
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                required
+                disabled={isSigningUp}
+                className="pr-10"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                disabled={isSigningUp}
+              >
+                {showPasswordConfirm ? (
                   <EyeOff className="h-4 w-4 text-muted-foreground" />
                 ) : (
                   <Eye className="h-4 w-4 text-muted-foreground" />
@@ -81,14 +128,14 @@ export function LoginForm() {
           <Button
             type="submit"
             className="w-full h-11 font-medium"
-            disabled={isLoggingIn}
+            disabled={isSigningUp}
           >
-            {isLoggingIn ? 'Logging in...' : 'Login'}
+            {isSigningUp ? 'Creating account...' : 'Sign Up'}
           </Button>
           <p className="text-sm text-center text-muted-foreground">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-primary hover:underline font-medium">
-              Sign up
+            Already have an account?{' '}
+            <Link to="/login" className="text-primary hover:underline font-medium">
+              Log in
             </Link>
           </p>
         </CardFooter>
