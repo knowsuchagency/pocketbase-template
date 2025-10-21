@@ -34,6 +34,40 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {/* Primary Meta Tags */}
+        <title>PocketBase Project</title>
+        <meta name="title" content="PocketBase Project" />
+        <meta name="description" content="A modern full-stack application with PocketBase backend and React Router v7 frontend" />
+        <meta name="keywords" content="PocketBase, React Router, TypeScript, Full Stack" />
+        <meta name="author" content="Your Name" />
+        <meta name="robots" content="index, follow" />
+        <meta name="theme-color" content="#000000" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://your-domain.com" />
+        <meta property="og:title" content="PocketBase Project" />
+        <meta property="og:description" content="A modern full-stack application with PocketBase backend and React Router v7 frontend" />
+        <meta property="og:image" content="https://your-domain.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="PocketBase Project" />
+        <meta property="og:site_name" content="PocketBase Project" />
+        <meta property="og:locale" content="en_US" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://your-domain.com" />
+        <meta name="twitter:title" content="PocketBase Project" />
+        <meta name="twitter:description" content="A modern full-stack application with PocketBase backend and React Router v7 frontend" />
+        <meta name="twitter:image" content="https://your-domain.com/og-image.png" />
+        <meta name="twitter:image:alt" content="PocketBase Project" />
+
+        {/* Favicon */}
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
+
         <Meta />
         <Links />
       </head>

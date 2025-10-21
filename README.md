@@ -208,6 +208,33 @@ import { Card } from '~/components/ui/card';
 import { cn } from '~/lib/utils';
 ```
 
+#### SEO and Meta Tags
+
+This template uses a dual-layer approach for SEO meta tags to ensure proper crawling and social sharing:
+
+**1. Static Meta Tags** (`frontend/app/root.tsx`):
+- Placed directly in the Layout component's `<head>` section
+- Always present in the initial HTML (critical for web crawlers and social media bots)
+- Provide default/fallback values for the entire site
+- Include: title, description, keywords, Open Graph tags, Twitter Card tags, and favicon links
+
+**2. Route-Specific Meta Tags** (e.g., `frontend/app/routes/index.tsx`):
+- Exported via the `meta` function in each route file
+- Rendered by React Router's `<Meta />` component
+- Override static tags on a per-route basis for specific pages
+- Allow dynamic meta tags based on route data
+
+**Why Both?**
+- Static tags ensure SEO tags are always present in the initial HTML
+- Route-specific meta exports allow customization per page
+- React Router's `<Meta />` component alone may not be sufficient for crawlers that don't execute JavaScript
+
+**Customizing Meta Tags:**
+1. Update the static tags in `frontend/app/root.tsx` with your site's default information
+2. Customize route-specific tags in each route file's `meta` export function
+3. Replace placeholder URLs (`https://your-domain.com`) with your actual domain
+4. Add a social sharing image at `/public/og-image.png` (1200x630px recommended)
+
 ## Deployment
 
 ### Backend Deployment
