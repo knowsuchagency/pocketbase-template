@@ -7,6 +7,7 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { useEffect } from "react";
+import { VibeKanbanWebCompanion } from "vibe-kanban-web-companion";
 import { useThemeStore } from "~/stores/theme.store";
 import { NotificationList } from "~/components/NotificationList";
 import { QueryProvider } from "~/providers";
@@ -91,6 +92,7 @@ export default function App() {
 
   return (
     <QueryProvider>
+      {import.meta.env.DEV && <VibeKanbanWebCompanion />}
       <Outlet />
       <NotificationList />
     </QueryProvider>
