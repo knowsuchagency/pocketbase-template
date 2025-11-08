@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "node scripts/update-wrangler-name.js",
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
