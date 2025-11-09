@@ -72,12 +72,12 @@ run = "cd frontend && bun run dev"
 [tasks.dev-backend]
 depends = ["install-backend-deps"]
 description = "Start the PocketBase development server"
-run = "go run main.go serve --dev"
+run = "go run main.go serve --dev --http 0.0.0.0:8090"
 
 [tasks.dev]
 depends = ["install-deps"]
 description = "Run both frontend and backend in development mode"
-run = 'npx concurrently --names "frontend,backend" --prefix-colors "cyan,magenta" "cd frontend && bun run dev" "go run main.go serve --dev"'
+run = 'npx concurrently --names "frontend,backend" --prefix-colors "cyan,magenta" "cd frontend && bun run dev --host" "go run main.go serve --dev --http 0.0.0.0:8090"'
 
 [tasks.build]
 depends = ["install-deps"]
