@@ -65,18 +65,22 @@ fi
 '''
 
 [tasks.dev-frontend]
+depends = ["install-frontend-deps"]
 description = "Run frontend dev server"
 run = "cd frontend && bun run dev"
 
 [tasks.dev-backend]
+depends = ["install-backend-deps"]
 description = "Start the PocketBase development server"
 run = "go run main.go serve --dev"
 
 [tasks.dev]
+depends = ["install-deps"]
 description = "Run both frontend and backend in development mode"
 run = 'npx concurrently --names "frontend,backend" --prefix-colors "cyan,magenta" "cd frontend && bun run dev" "go run main.go serve --dev"'
 
 [tasks.build]
+depends = ["install-deps"]
 description = "Build both backend binary and frontend"
 run = """
 go build -o pocketbase main.go
@@ -84,10 +88,12 @@ cd frontend && bun run build
 """
 
 [tasks.test-backend]
+depends = ["install-backend-deps"]
 description = "Run backend tests"
 run = "go test -v ./..."
 
 [tasks.test-frontend]
+depends = ["install-frontend-deps"]
 description = "Run frontend tests"
 run = "cd frontend && bun run test"
 
@@ -178,26 +184,32 @@ fi
 """
 
 [tasks.typecheck]
+depends = ["install-frontend-deps"]
 description = "Run TypeScript type checking"
 run = "cd frontend && bun run typecheck"
 
 [tasks.test-ui]
+depends = ["install-frontend-deps"]
 description = "Run Playwright tests with interactive UI"
 run = "cd frontend && bun run test:ui"
 
 [tasks.test-headed]
+depends = ["install-frontend-deps"]
 description = "Run Playwright tests in headed browser mode"
 run = "cd frontend && bun run test:headed"
 
 [tasks.test-debug]
+depends = ["install-frontend-deps"]
 description = "Debug Playwright tests interactively"
 run = "cd frontend && bun run test:debug"
 
 [tasks.test-report]
+depends = ["install-frontend-deps"]
 description = "Show HTML test report"
 run = "cd frontend && bun run test:report"
 
 [tasks.build-frontend]
+depends = ["install-frontend-deps"]
 description = "Build frontend for production"
 run = "cd frontend && bun run build"
 
