@@ -23,7 +23,7 @@ mise run build        # Build for production
 
 - Components in `frontend/app/components/`
 - Routes in `frontend/app/routes/`
-- shadcn/ui imports: `import { Button } from '~/components/ui/button'`
+- shadcn/ui imports: `import { Button } from '@/components/ui/button'`
 - PocketBase client configured in `frontend/app/lib/pocketbase.ts`
 
 ## Database Migrations

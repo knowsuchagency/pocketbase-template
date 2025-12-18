@@ -52,7 +52,7 @@ mise run dev
 
 This starts both:
 - PocketBase backend at `http://localhost:8090` (admin UI at `http://localhost:8090/_/`)
-- React frontend at `http://localhost:5173`
+- React frontend at `http://localhost:3000`
 
 To run services individually:
 ```bash
@@ -151,7 +151,7 @@ The frontend tests are configured to:
 ### Frontend Architecture
 
 - **Framework**: React Router v7 in SPA mode (SSR disabled)
-- **Styling**: Tailwind CSS v4 with shadcn/ui components (New York style)
+- **Styling**: Tailwind CSS v4 with shadcn/ui components (radix-vega style)
 - **State Management**: 
   - **Server State**: TanStack Query for API data, auth, and caching
   - **UI State**: Zustand for local UI state (theme, notifications)
@@ -201,11 +201,11 @@ The frontend tests are configured to:
 When importing shadcn/ui components, use these standard paths:
 ```typescript
 // UI Components
-import { Button } from '~/components/ui/button';
-import { Card } from '~/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 // Utilities
-import { cn } from '~/lib/utils';
+import { cn } from '@/lib/utils';
 ```
 
 #### SEO and Meta Tags
