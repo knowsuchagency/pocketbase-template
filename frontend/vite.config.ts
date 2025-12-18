@@ -14,8 +14,8 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
-    allowedHosts: ["dokploy"],
+    port: 3000,
+    allowedHosts: ["citadel"],
     proxy: {
       "/api": {
         target: "http://localhost:8090",

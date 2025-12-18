@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { LoginForm } from "~/components/LoginForm";
-import { Navbar } from "~/components/Navbar";
-import { useAuth } from "~/hooks";
+import { LoginForm } from "@/components/LoginForm";
+import { Navbar } from "@/components/Navbar";
+import { useAuth } from "@/hooks";
 import type { Route } from "./+types/login";
 
 export function meta({}: Route.MetaArgs) {

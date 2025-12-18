@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import pocketbaseService, { type User } from '~/services/pocketbase.service';
+import pocketbaseService, { type User } from '@/services/pocketbase.service';
 
 export const userKeys = {
   all: ['user'] as const,

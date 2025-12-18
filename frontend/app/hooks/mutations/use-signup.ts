@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import pocketbaseService, { type SignupCredentials } from '~/services/pocketbase.service';
+import pocketbaseService, { type SignupCredentials } from '@/services/pocketbase.service';
 import { userKeys } from '../queries/use-user';
-import { useAppStore } from '~/stores/app.store';
+import { useAppStore } from '@/stores/app.store';
 
 export function useSignup() {
   const queryClient = useQueryClient();

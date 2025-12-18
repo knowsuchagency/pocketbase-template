@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
-import pocketbaseService from '~/services/pocketbase.service';
-import { userKeys } from '~/hooks/queries/use-user';
-import { useAppStore } from '~/stores/app.store';
+import pocketbaseService from '@/services/pocketbase.service';
+import { userKeys } from '@/hooks/queries/use-user';
+import { useAppStore } from '@/stores/app.store';
 
 export function useLogout() {
   const queryClient = useQueryClient();

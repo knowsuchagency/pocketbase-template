@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router";
-import { ThemeToggle } from "~/components/ThemeToggle";
-import { useAuth } from "~/hooks";
-import { Button } from "~/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/hooks";
+import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   const location = useLocation();

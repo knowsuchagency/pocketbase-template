@@ -1,7 +1,7 @@
-import { useAppStore } from '~/stores/app.store';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { useAppStore } from '@/stores/app.store';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { X } from 'lucide-react';
-import { Button } from '~/components/ui/button';
+import { Button } from '@/components/ui/button';
 
 export function NotificationList() {
   const notifications = useAppStore((state) => state.notifications);

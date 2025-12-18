@@ -1,7 +1,7 @@
-import { Navbar } from "~/components/Navbar";
-import { Button } from "~/components/ui/button";
+import { Navbar } from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
-import { useAuth } from "~/hooks";
+import { useAuth } from "@/hooks";
 import type { Route } from "./+types/index";
 
 export function meta({}: Route.MetaArgs) {

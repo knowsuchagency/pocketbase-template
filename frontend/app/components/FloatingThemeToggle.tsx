@@ -1,11 +1,11 @@
-import { useThemeStore } from "~/stores/theme.store";
-import { Button } from "~/components/ui/button";
+import { useThemeStore } from "@/stores/theme.store";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { Sun, Moon, Monitor } from "lucide-react";
 
 export function FloatingThemeToggle() {

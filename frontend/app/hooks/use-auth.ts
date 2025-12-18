@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import pocketbaseService from '~/services/pocketbase.service';
+import pocketbaseService from '@/services/pocketbase.service';
 import { useUser, userKeys } from './queries/use-user';
 import { useLogin } from './mutations/use-login';
 import { useLogout } from './mutations/use-logout';

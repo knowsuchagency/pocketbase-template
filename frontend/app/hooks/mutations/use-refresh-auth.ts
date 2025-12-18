@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import pocketbaseService from '~/services/pocketbase.service';
-import { userKeys } from '~/hooks/queries/use-user';
+import pocketbaseService from '@/services/pocketbase.service';
+import { userKeys } from '@/hooks/queries/use-user';
 
 export function useRefreshAuth() {
   const queryClient = useQueryClient();

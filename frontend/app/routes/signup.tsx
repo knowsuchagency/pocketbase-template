@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { SignupForm } from "~/components/SignupForm";
-import { Navbar } from "~/components/Navbar";
-import { useAuth } from "~/hooks";
+import { SignupForm } from "@/components/SignupForm";
+import { Navbar } from "@/components/Navbar";
+import { useAuth } from "@/hooks";
 import type { Route } from "./+types/signup";
 
 export function meta({}: Route.MetaArgs) {
