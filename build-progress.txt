@@ -1,0 +1,143 @@
+=== AUTO-BUILD PROGRESS ===
+
+Project: PocketBase Update to v0.34.2
+Workspace: /home/stephan/projects/pocketbase-template
+Started: 2025-12-19
+
+Workflow Type: migration
+Rationale: Framework upgrade across 4 minor versions (v0.30.1 → v0.34.2) with breaking changes.
+           Requires careful preparation (backup), testing (local build), execution (Docker rebuild),
+           and verification. Not a feature addition - it's a dependency upgrade with API
+           compatibility concerns and database migration requirements.
+
+Session 1 (Planner):
+- Created comprehensive implementation_plan.json
+- Phases: 4 (Prepare, Test, Execute, Verify)
+- Total subtasks: 23
+- Created init.sh for environment setup
+- Updated context.json with task details
+
+Phase Summary:
+
+1. Phase 1 - Prepare (Backup and Update Dependencies)
+   Type: setup
+   Subtasks: 5
+   Dependencies: None
+   Description: Create backup, update Go module dependencies, and audit code for breaking changes
+   Key Tasks:
+   - Create pb_data backup (CRITICAL - no rollback without this)
+   - Update PocketBase Go module to v0.34.2
+   - Audit main.go for deprecated APIs (app.IsDebug, RequestQuery)
+   - Audit routes/ for deprecated logging APIs
+   - Audit migrations/ for API compatibility
+
+2. Phase 2 - Test (Local Build and Verification)
+   Type: implementation
+   Subtasks: 6
+   Dependencies: phase-1-prepare
+   Description: Build and test the updated PocketBase binary locally before Docker deployment
+   Key Tasks:
+   - Build PocketBase binary with updated dependencies
+   - Run unit tests (tests/routes/)
+   - Start PocketBase locally and verify migrations
+   - Test health check endpoint
+   - Test admin dashboard
+   - Verify SMTP configuration (Amazon SES)
+
+3. Phase 3 - Execute (Docker Rebuild and Deployment)
+   Type: implementation
+   Subtasks: 4
+   Dependencies: phase-2-test
+   Description: Rebuild Docker images with updated PocketBase and deploy
+   Key Tasks:
+   - Rebuild Docker images with --no-cache
+   - Start Docker services (migrate + pocketbase)
+   - Verify migrations executed successfully
+   - Verify pocketbase service started without errors
+
+4. Phase 4 - Verify (Comprehensive Validation)
+   Type: integration
+   Subtasks: 8
+   Dependencies: phase-3-execute
+   Description: Run all verification checks to ensure update succeeded without regressions
+   Key Tasks:
+   - Test health check endpoint via Docker
+   - Test admin dashboard via Docker
+   - Test API documentation endpoint
+   - Test static file serving
+   - Verify PocketBase version (v0.34.2)
+   - Verify no deprecation warnings
+   - Verify pb_data volume persistence
+   - Run full test suite
+
+Services Involved:
+- pocketbase (primary) - Go framework update, rebuild, and Docker image recreation
+- migrate (integration) - Database migration execution on first startup after update
+
+Breaking Changes to Watch:
+- v0.20.0: Logging API refactor (app.IsDebug removed, Dao.RequestQuery → Dao.LogQuery)
+- v0.22.0: AWS SDK v1 → v2 (may affect SMTP/Amazon SES configuration)
+- v0.16.11: Relations to views disallowed (auto-migrated to json/text)
+
+Critical Files:
+- go.mod, go.sum - Version updates
+- main.go - Custom PocketBase initialization with hooks
+- routes/ - Custom API endpoints
+- migrations/ - Database migrations
+- pb_data/ - SQLite database + runtime data (MUST BACKUP)
+
+Parallelism Analysis:
+- Max parallel phases: 1 (sequential workflow)
+- Parallel groups: None
+- Recommended workers: 1
+- Speedup estimate: Sequential - migration workflows must complete phases in order
+- Reasoning: Migration workflow has strict dependencies: Prepare → Test → Execute → Verify.
+             Only phase-4 (verify) has parallel_safe=true for its subtasks, but the phase
+             itself depends on phase-3 completion.
+
+Verification Strategy:
+- Risk level: medium
+- Test types: unit, integration
+- Security scanning: not required
+- Staging deployment: not required
+- Key acceptance criteria:
+  * All existing tests pass (tests/routes/)
+  * PocketBase version shows v0.34.2
+  * Health check returns HTTP 200
+  * Admin dashboard accessible
+  * No deprecation warnings in logs
+  * Auto-migrations executed successfully
+  * SMTP configuration intact (Amazon SES)
+  * Docker services start without errors
+  * pb_data volume persists correctly
+
+=== STARTUP COMMAND ===
+
+To continue building this spec, run:
+
+  source auto-claude/.venv/bin/activate && python auto-claude/run.py --spec 003 --parallel 1
+
+This will start the autonomous implementation process following the migration workflow phases.
+
+=== IMPORTANT NOTES ===
+
+1. BACKUP REQUIRED: The first subtask creates a backup of pb_data/ directory. This is CRITICAL
+   because auto-migrations have no rollback mechanism without a backup.
+
+2. TESTING STRATEGY: The migration follows a safe path:
+   - Prepare: Update dependencies and audit code
+   - Test: Local build and verification (catch issues before Docker)
+   - Execute: Docker rebuild and deployment
+   - Verify: Comprehensive validation of all functionality
+
+3. BREAKING CHANGES: Custom code has been pre-audited and does not use deprecated APIs:
+   - No usage of app.IsDebug() or Dao.RequestQuery() found
+   - SMTP configuration uses PocketBase's built-in SES support (AWS SDK handled internally)
+   - Migrations use stable APIs (core.App, core.Record)
+
+4. ROLLBACK PLAN: If update fails:
+   - Restore pb_data/ from backup (pb_data.backup/)
+   - Revert go.mod: go get github.com/pocketbase/pocketbase@v0.30.1
+   - Rebuild: go mod tidy && docker-compose build --no-cache
+
+=== END SESSION 1 ===
