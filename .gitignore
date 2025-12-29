@@ -1,0 +1,4 @@
+.env
+frontend/
+pb_data/
+pocketbase
