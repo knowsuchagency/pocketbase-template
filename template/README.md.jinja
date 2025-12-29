@@ -1,0 +1,168 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+## Architecture Overview
+
+- **Backend**: PocketBase API server (Go) - serves both API endpoints and frontend static files
+- **Frontend**: React Router v7 in SPA mode, served directly from PocketBase
+- **Authentication**: PocketBase auth with TanStack Query for server state management
+- **Deployment**: Single Docker container serving both backend and frontend
+
+## Features
+
+- PocketBase backend-as-a-service framework (v0.29+)
+- React Router v7 in SPA mode, served directly from PocketBase
+- Docker configuration for full-stack deployment (backend + frontend)
+- Database migration system with automatic migrations in development
+- Task automation with `mise` for development workflow
+- Environment-based superuser initialization
+- Health check endpoint at `/health`
+- State Management with TanStack Query (server state) and Zustand (UI state)
+- End-to-end testing with Playwright
+- Tailwind CSS v4 with shadcn/ui components
+
+## Prerequisites
+
+- Docker and Docker Compose (for containerized backend deployment)
+- [mise](https://mise.jdx.dev/) task runner and tool version manager
+
+## Quick Start
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd {{ project_slug }}
+```
+
+2. Initialize the project
+```bash
+mise run init
+```
+
+This will:
+- Install all dependencies (backend and frontend)
+- Create a `.env` file if it doesn't exist
+- Prompt you to set superuser credentials (with proper interactive input handling)
+
+3. Run the development servers
+```bash
+mise run dev
+```
+
+This starts both:
+- PocketBase backend at `http://localhost:8090` (admin UI at `http://localhost:8090/_/`)
+- React frontend at `http://localhost:3000`
+
+To run services individually:
+```bash
+mise run dev-backend    # Backend only
+mise run dev-frontend   # Frontend only
+```
+
+### Docker Deployment
+
+1. Create a `.env` file:
+```env
+SUPERUSER_EMAIL=admin@example.com
+SUPERUSER_PASSWORD=your-secure-password
+```
+
+2. Build frontend and backend, then run with Docker Compose
+```bash
+mise run build
+docker-compose up -d
+```
+
+This will serve both the API and frontend from a single container at `http://localhost:8090`.
+
+## Essential Commands
+
+All commands are run from the project root:
+
+### Development
+```bash
+mise run init                    # Initialize project (install deps, setup env)
+mise run dev                     # Run both frontend and backend concurrently
+mise run dev-backend             # Start PocketBase development server only
+mise run dev-frontend            # Start frontend development server only
+```
+
+### Building & Deployment
+```bash
+mise run build                   # Build both backend binary and frontend
+mise run build-frontend          # Build frontend for production
+mise run preview-frontend        # Preview frontend production build
+mise run deploy                  # Deploy using Docker Compose
+```
+
+### Database Management
+```bash
+mise run makemigration "name"    # Create new migration file
+mise run migrate                 # Run pending migrations
+mise run migratedown             # Rollback last migration
+mise run show-collections        # Show all collections in human/LLM readable format (use --hidden to include hidden collections)
+mise run reset                   # Reset the database (WARNING: deletes all data)
+```
+
+### Testing
+```bash
+mise run test                    # Run all tests (backend and frontend)
+mise run test-backend            # Run Go backend tests
+mise run test-frontend           # Run Playwright frontend tests
+mise run test-ui                 # Run tests with interactive UI
+mise run test-headed             # Run tests in headed browser mode
+mise run test-debug              # Debug tests interactively
+mise run test-report             # Show HTML test report
+```
+
+### Code Quality
+```bash
+mise run typecheck               # Run TypeScript type checking
+```
+
+### Dependencies
+```bash
+mise run update-deps             # Update all dependencies to latest versions
+mise run update-pocketbase       # Update PocketBase to latest version
+mise run check-updates           # Check for available dependency updates
+```
+
+## Architecture Details
+
+### Backend Structure
+
+- **PocketBase Application**: Single binary with embedded SQLite database
+- **Migration System**: Automatic migration support with `migratecmd` plugin
+- **Static File Serving**: Backend serves frontend static files from `frontend/build/client`
+- **SPA Routing**: All routes fall back to index.html for client-side routing
+- **Environment Variables**:
+  - `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` for initial admin setup
+
+### Frontend Architecture
+
+- **Framework**: React Router v7 in SPA mode (SSR disabled)
+- **Styling**: Tailwind CSS v4 with shadcn/ui components (radix-vega style)
+- **State Management**:
+  - **Server State**: TanStack Query for API data, auth, and caching
+  - **UI State**: Zustand for local UI state (theme, notifications)
+- **Testing**: Playwright for end-to-end testing
+- **Build Output**: Static files in `frontend/build/client`
+- **Deployment**: Served directly from PocketBase
+- **Configuration**: Automatic backend URL detection (relative in production, localhost:8090 in dev)
+- **TypeScript**: Full TypeScript support with strict type checking
+
+## Environment Variables
+
+### Backend
+- `SUPERUSER_EMAIL` - Email for the initial admin user
+- `SUPERUSER_PASSWORD` - Password for the initial admin user
+- `SMTP_USERNAME` - SMTP username (optional)
+- `SMTP_PASSWORD` - SMTP password (optional)
+- `SMTP_HOST` - SMTP server host (optional)
+- `SMTP_PORT` - SMTP server port (optional, default: 587)
+- `SMTP_SENDER_NAME` - Email sender name (optional)
+- `SMTP_SENDER_ADDRESS` - Email sender address (optional)
+
+### Frontend
+- No environment variables needed - the frontend automatically connects to the correct backend URL

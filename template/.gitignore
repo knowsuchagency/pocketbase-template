@@ -43,3 +43,6 @@ pocketbase
 frontend/test-results/
 frontend/playwright-report/
 .DS_Store
+
+# Copier
+.copier-answers.yml

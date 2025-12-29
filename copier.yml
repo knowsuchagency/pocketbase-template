@@ -1,0 +1,37 @@
+_min_copier_version: "9.0.0"
+_subdirectory: template
+
+project_name:
+  type: str
+  help: "Project name (e.g., 'My Awesome App')"
+
+project_slug:
+  type: str
+  help: "Project slug for Go module and directory name"
+  default: "{{ project_name | lower | replace(' ', '-') | replace('_', '-') }}"
+
+project_description:
+  type: str
+  help: "Short description of your project"
+  default: "A full-stack application with PocketBase and React Router v7"
+
+allowed_hosts:
+  type: str
+  help: "Comma-separated hostnames for Vite dev server (leave empty to allow all)"
+  default: ""
+
+superuser_email:
+  type: str
+  help: "Initial superuser email (optional, can be set in .env later)"
+  default: ""
+
+superuser_password:
+  type: str
+  help: "Initial superuser password (optional, can be set in .env later)"
+  secret: true
+  default: ""
+
+_tasks:
+  - "ln -sf CLAUDE.md AGENTS.md"
+  - "ln -sf CLAUDE.md GEMINI.md"
+  - "ln -sf CLAUDE.md WARP.md"

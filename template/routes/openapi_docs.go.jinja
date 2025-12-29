@@ -14,7 +14,7 @@ const stoplightHTML = `<!DOCTYPE html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>PocketBase Project API Documentation</title>
+    <title>{{ project_name }} API Documentation</title>
     <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css" />
     <script defer>
@@ -52,25 +52,25 @@ func RegisterOpenAPIDocs(se *core.ServeEvent) {
 	se.Router.GET("/api/openapi.json", func(re *core.RequestEvent) error {
 		// Generate spec with dynamic server URL
 		spec := GenerateOpenAPISpec()
-		
+
 		// Dynamically set the server URL based on the request
 		scheme := "http"
 		if re.Request.TLS != nil || re.Request.Header.Get("X-Forwarded-Proto") == "https" {
 			scheme = "https"
 		}
-		
+
 		host := re.Request.Host
 		if host == "" {
 			host = "localhost:8090"
 		}
-		
+
 		spec.Servers = []*openapi3.Server{
 			{
 				URL:         fmt.Sprintf("%s://%s", scheme, host),
 				Description: "API Server",
 			},
 		}
-		
+
 		// Convert to JSON
 		jsonSpec, err := json.MarshalIndent(spec, "", "  ")
 		if err != nil {

@@ -8,8 +8,8 @@ func GenerateOpenAPISpec() *openapi3.T {
 	spec := &openapi3.T{
 		OpenAPI: "3.0.3",
 		Info: &openapi3.Info{
-			Title:       "PocketBase Project API",
-			Description: "Custom API endpoints for PocketBase Project application",
+			Title:       "{{ project_name }} API",
+			Description: "Custom API endpoints for {{ project_name }} application",
 			Version:     "1.0.0",
 		},
 		// Servers will be set dynamically based on request

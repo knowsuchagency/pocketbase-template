@@ -11,7 +11,7 @@ export function Navbar() {
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <Link to="/" className="flex items-center space-x-2">
-          <span className="font-bold">PocketBase Project</span>
+          <span className="font-bold">{{ project_name }}</span>
         </Link>
         <div className="flex items-center gap-2">
           {isAuthenticated ? (

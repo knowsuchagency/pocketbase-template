@@ -15,7 +15,11 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    allowedHosts: ["citadel"],
+{%- if allowed_hosts %}
+    allowedHosts: [{% for host in allowed_hosts.split(',') %}"{{ host.strip() }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+{%- else %}
+    allowedHosts: true,
+{%- endif %}
     proxy: {
       "/api": {
         target: "http://localhost:8090",
