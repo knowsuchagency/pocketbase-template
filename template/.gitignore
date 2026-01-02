@@ -32,7 +32,8 @@ go.work.sum
 # .vscode/
 
 # Pocketbase
-pb_data/
+pb_data/*
+!pb_data/.gitkeep
 pb_public/
 pocketbase
 

@@ -32,6 +32,7 @@ superuser_password:
   default: ""
 
 _tasks:
+  - "mkdir -p pb_data"
   - "ln -sf CLAUDE.md AGENTS.md"
   - "ln -sf CLAUDE.md GEMINI.md"
   - "ln -sf CLAUDE.md WARP.md"
