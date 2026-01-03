@@ -36,3 +36,10 @@ _tasks:
   - "ln -sf CLAUDE.md AGENTS.md"
   - "ln -sf CLAUDE.md GEMINI.md"
   - "ln -sf CLAUDE.md WARP.md"
+  - "mise trust"
+  - >-
+    {% if superuser_email or superuser_password %}
+    cp .env.example .env &&
+    sed -i 's/^SUPERUSER_EMAIL=.*/SUPERUSER_EMAIL={{ superuser_email }}/' .env &&
+    sed -i 's/^SUPERUSER_PASSWORD=.*/SUPERUSER_PASSWORD={{ superuser_password }}/' .env
+    {% endif %}
