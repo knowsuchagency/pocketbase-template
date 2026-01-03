@@ -67,6 +67,18 @@ func main() {
 		log.Println("Automigrate: DISABLED (production mode)")
 	}
 
+	// In dev mode, strip X-Frame-Options to allow iframe embedding (e.g., Vibora browser preview)
+	if devMode {
+		app.OnServe().BindFunc(func(e *core.ServeEvent) error {
+			e.Router.BindFunc(func(re *core.RequestEvent) error {
+				err := re.Next()
+				re.Response.Header().Del("X-Frame-Options")
+				return err
+			})
+			return e.Next()
+		})
+	}
+
 	app.OnServe().BindFunc(routes.Register)
 
 	if err := app.Start(); err != nil {
