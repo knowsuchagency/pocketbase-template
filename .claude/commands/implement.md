@@ -19,7 +19,7 @@ model: claude-opus-4-1
 This command implements features end-to-end in this specific project architecture:
 
 - **Backend**: PocketBase (Go) with migration system
-- **Frontend**: React Router v7 with TanStack Query, Zustand client state management, shadcn/ui components
+- **Frontend**: React Router v7 with TanStack Query, shadcn/ui components
 - **Testing**: Playwright for end-to-end tests
 
 ## Prerequisites
@@ -269,8 +269,7 @@ Note: The Playwright configuration automatically starts both the PocketBase back
 
 ### Frontend Architecture
 
-- Use TanStack Query for data fetching and server state
-- Use Zustand for client state management
+- Use TanStack Query for state management
 - Import shadcn components from `~/components/ui/`
 - Follow existing patterns for consistency
 

@@ -1,11 +1,12 @@
-import { useAppStore } from '@/stores/app.store';
+import { useNotifications } from '@/hooks/queries/use-notifications';
+import { useNotificationActions } from '@/hooks/mutations/use-notification-actions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function NotificationList() {
-  const notifications = useAppStore((state) => state.notifications);
-  const removeNotification = useAppStore((state) => state.removeNotification);
+  const { data: notifications = [] } = useNotifications();
+  const { removeNotification } = useNotificationActions();
 
   if (notifications.length === 0) return null;
 

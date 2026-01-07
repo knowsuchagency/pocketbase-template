@@ -7,7 +7,7 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { useEffect } from "react";
-import { useThemeStore } from "@/stores/theme.store";
+import { useTheme } from "@/hooks/queries/use-theme";
 import { NotificationList } from "@/components/NotificationList";
 import { QueryProvider } from "@/providers";
 
@@ -47,20 +47,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  const { effectiveTheme } = useThemeStore();
+function AppContent() {
+  const { data: themeState } = useTheme();
 
   useEffect(() => {
     // Initialize theme on mount
-    const root = document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(effectiveTheme);
-  }, [effectiveTheme]);
+    if (themeState) {
+      const root = document.documentElement;
+      root.classList.remove("light", "dark");
+      root.classList.add(themeState.effectiveTheme);
+    }
+  }, [themeState?.effectiveTheme]);
 
   return (
-    <QueryProvider>
+    <>
       <Outlet />
       <NotificationList />
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <QueryProvider>
+      <AppContent />
     </QueryProvider>
   );
 }

@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import pocketbaseService, { type SignupCredentials } from '@/services/pocketbase.service';
 import { userKeys } from '../queries/use-user';
-import { useAppStore } from '@/stores/app.store';
+import { useNotificationActions } from '@/hooks/mutations/use-notification-actions';
 
 export function useSignup() {
   const queryClient = useQueryClient();
-  const addNotification = useAppStore((state) => state.addNotification);
+  const { addNotification } = useNotificationActions();
 
   return useMutation({
     mutationFn: async (credentials: SignupCredentials) => {

@@ -1,4 +1,5 @@
-import { useThemeStore } from "@/stores/theme.store";
+import { useTheme } from "@/hooks/queries/use-theme";
+import { useThemeActions } from "@/hooks/mutations/use-theme-actions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,7 +10,8 @@ import {
 import { Sun, Moon, Monitor } from "lucide-react";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useThemeStore();
+  const { data: themeState } = useTheme();
+  const { setTheme } = useThemeActions();
 
   return (
     <DropdownMenu>

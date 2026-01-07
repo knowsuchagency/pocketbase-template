@@ -59,8 +59,7 @@ copier update
 
 - React Router v7 frontend with:
   - Authentication flow (login, signup, logout)
-  - TanStack Query for server state
-  - Zustand for UI state
+  - TanStack Query for state management
   - shadcn/ui components
   - Dark/light theme support
 
