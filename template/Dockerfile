@@ -7,7 +7,7 @@ WORKDIR /app
 COPY frontend/package.json frontend/bun.lock ./
 RUN bun install --frozen-lockfile
 
-# Frontend build stage - using Node for React Router compatibility
+# Frontend build stage - using Node for React Router v7 compatibility
 FROM node:24-alpine AS frontend-builder
 
 WORKDIR /app
@@ -18,7 +18,7 @@ COPY --from=frontend-deps /app/node_modules ./node_modules
 # Copy frontend source code and package files
 COPY frontend .
 
-# Build frontend with npm (React Router v7 works better with Node)
+# Build frontend (React Router v7 has compatibility issues with Bun in Docker)
 ENV NODE_ENV=production
 RUN npm run build
 
